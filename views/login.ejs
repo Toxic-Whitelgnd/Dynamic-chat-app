@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login Form</title>
 </head>
 <body>
-    <div class="login-box">
-        <h2>Register Form</h2>
-        <form action="/register" method="post">
-            <div class="user-box">
-                <input type="text" name="name" placeholder="PlayBoiName">
-                <label>Username</label>
-            </div>
-            <input type="file" name="image" required>
+    <h1>Login Form</h1>
+
+<div class="login-box">
+        <h2>Login Form</h2>
+        <form action="/" method="post">
             <div class="user-box">
                 <input type="email" name="email" placeholder="palyboi99@gmail.com">
                 <label>Email</label>
@@ -27,25 +24,24 @@
                 <span></span>
                 <span></span>
                 <span></span>
-                <input type="submit" value="R E G I S T E R" id="subbtn">
+                <input type="submit" value="L O G I N" id="subbtn">
             </a>
-            <a href="/login">
+            <a href="/register">
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
-                Login?
+               Register?
             </a>
         </form>
-    </div>
-    <% if(typeof message !=='undefined' ){ %> 
-        <p style="color:green;">
-            <%= message %>
-        </p>
-        <% } %>
+
+        <% if(typeof message !=='undefined' ){ %> 
+            <p style="color:red;">
+                <%= message %>
+            </p>
+            <% } %>
 </body>
 </html>
-
 
 
 
