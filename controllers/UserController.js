@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const Chat = require("../models/ChatModel");
 const bcrypt = require('bcrypt');
 
 const registerLoad = async (req, res) => {
@@ -17,8 +18,10 @@ const register = async (req, res) => {
             name: req.body.name,
             password: passwordHash,
             email: req.body.email,
-            image: "images/" + req.body.image
+            image: 'images/'+req.body.image
+            
         })
+
 
         await User.insertMany([newuser]).then((docs) => {
             console.log(docs);
@@ -91,7 +94,25 @@ const logout = async (req, res) => {
         console.log(error);
     }
 }
+// this is for getting msg from frontend (to store in db) and sending response to frontend
+const saveChat = async (req, res) => {
+    try {
 
+        var chat = new Chat(
+            {
+                sender_id: req.body.sender_id,
+                reciver_id:req.body.reciver_id,
+                message:req.body.message,
+            }
+        );
+
+        var newChat = await chat.save();
+
+        res.status(200).send({success:true, message:"chat inserted to db",data:newChat});
+    } catch (error) {
+        res.status(400).send({success:false, message:"Error from clientside"});
+    }
+}
 
 module.exports = {
     register,
@@ -100,4 +121,5 @@ module.exports = {
     login,
     loadDashboard,
     logout,
+    saveChat,
 }

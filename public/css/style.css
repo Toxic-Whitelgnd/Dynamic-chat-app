@@ -12028,3 +12028,13 @@ a[data-toggle="collapse"] {
 .offline-status{
   color: red;
 }
+.current-user{
+  text-align: right;
+  margin-right: 10px;
+  color: #000;
+}
+.another-user{
+  text-align: left;
+  margin-left: 10px;
+  color: #000;
+}

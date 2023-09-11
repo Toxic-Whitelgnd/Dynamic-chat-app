@@ -28,17 +28,19 @@ user_route.set('views', './views');
 user_route.use(express.static('public'));
 
 
-const ImgStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, "../public/images"));
+const storage = multer.diskStorage({
+   
+    destination:function (req, file, cb) {
+        cb(null, path.join(__dirname,'/public/images/'));
     },
-    filename: function (req, file, cb) {
-        const fname = Date.now() + '-' + file.originalname;
+    filename:function (req, file, cb) {
+        const fname = Date.now()+'-'+file.originalname;
+        console.log("inside the filename"+fname);
         cb(null, fname);
     }
 })
 
-const upload = multer({ storage: ImgStorage });
+const upload = multer( { storage: storage });
 
 user_route.get('/', auth.isLogout,userController.loginLoad);
 user_route.post('/', userController.login);
@@ -49,6 +51,9 @@ user_route.get('/dashboard',auth.isLogin ,userController.loadDashboard);
 // usercontroller methods are used here
 user_route.get('/register',auth.isLogout, userController.registerLoad);
 user_route.post('/register', upload.single('image'), userController.register);
+
+// for saving chat
+user_route.post('/save-chat',userController.saveChat);
 
 // doesnt match any route it will redirect to login page
 user_route.get('*', function (req, res) {
