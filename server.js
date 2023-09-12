@@ -47,6 +47,11 @@ userver.on('connection',async function(socket){
         // firing the exit caht after getting
         socket.emit('GetExistChat',{chats:chats});
     });
+
+    // for deleting message
+    socket.on('chatDeleted',(id)=>{
+        socket.broadcast.emit('chatmessageDeleted',id);
+    });
        
     
 });

@@ -12038,3 +12038,7 @@ a[data-toggle="collapse"] {
   margin-left: 10px;
   color: #000;
 }
+.fa-trash{
+  color: red;
+  font-size: 12px;
+}

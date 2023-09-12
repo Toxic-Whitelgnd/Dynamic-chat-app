@@ -11,13 +11,14 @@
                     for(let i=0;i<users.length;i++){ %>
                         <li class="list-group-item list-group-item-dark cursor-pointer user-list"
                             data-id="<%=users[i]['_id'] %>">
-                            <img src="<%= 'http://localhost:9999/'+users[i]['image'] %>" alt="userpic" width="50" height="50">
+                            <img src="<%= 'http://localhost:9999/'+users[i]['image'] %>" alt="userpic" width="50"
+                                height="50">
                             <%= users[i]['name'] %>
                                 <% if(users[i]['is_online']==1){ %>
                                     <sub class="online-status" id="<%= users[i]['_id'] %>-status">online</sub>
                                     <% }else{ %>
                                         <sub class="offline-status" id="<%= users[i]['_id'] %>-status">offline</sub>
-                                        <% }  %>
+                                        <% } %>
                         </li>
                         <% } } %>
             </ul>
@@ -33,6 +34,30 @@
                     <input type="text" name="message" placeholder="Enter Message" id="message" I class="border"
                         required>
                     <input type="submit" value="Send Message" class="btn btn-primary">
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deletemessageChat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="delete-message-form">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="delete-message-id">
+                        <p>Are you sure you want to delete the message?</p>
+                        <p id="delete-message"> <b></b></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -71,14 +96,18 @@
             for (let i = 0; i < chats.length; i++) {
                 let addClass = ''
                 if (chats[i]['sender_id'] == sender_id) {
-                    console.log("working??");
                     addClass = 'current-user';
                 }
                 else {
                     addClass = 'another-user';
                 }
-                htmls += `<div class='` + addClass + `'>
-                            <h5>`+ chats[i]['message'] + `</h5>
+                htmls += `<div class='` + addClass + `' id='`+chats[i]['_id']+`'>
+                            <h5>`+ chats[i]['message'] + ``;
+                if (chats[i]['sender_id'] == sender_id) {
+                    htmls += `<i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+chats[i]['_id']+`' data-bs-target="#deletemessageChat" ></i> `;
+                }
+
+                htmls += `</h5>
                             </div>`;
             }
             $('#chat-container').append(htmls);
@@ -118,8 +147,10 @@
                     if (res.success) {
                         $('#message').val('');
                         var chat = res.data.message;
-                        let html = `<div class="current-user">
-                            <h5>`+ chat + `</h5>
+                        let html = `<div class="current-user" id='`+res.data._id+`'>
+                            <h5>`+ chat + `
+                                <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+res.data._id+`' data-bs-target="#deletemessageChat" ></i>  
+                            </h5>
                             </div>`;
 
                         $('#chat-container').append(html);
@@ -127,7 +158,7 @@
                         socket.emit('newChat', res.data);
                         scrollToBottom();
                     }
-                    else{
+                    else {
                         alert('Failed');
                     }
                 }
@@ -137,8 +168,10 @@
 
         socket.on('loadnewChat', function (data) {
             if (sender_id == data.reciver_id && reciver_id == data.sender_id) {
-                let html = `<div class="another-user">
-                            <h5>`+ data.message + `</h5>
+                let html = `<div class="another-user" id='`+data._id+`'>
+                            <h5>`+ data.message + `
+                                <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+data._id+`' data-bs-target="#deletemessageChat" ></i>
+                                </h5>
                             </div>`;
 
                 $('#chat-container').append(html);
@@ -154,6 +187,47 @@
                 }, 0
             )
         };
+
+        // deleting the msg 
+        $(document).on('click','.fa-trash',function(e){
+           
+            let msg = $(this).parent().text();
+            $('#delete-message').text(msg);
+
+            $('#delete-message-id').val($(this).attr('data-id'));
+
+        })
+
+        // sending the deleting id to the server
+        $('#delete-message-form').submit(function(e){
+            e.preventDefault();
+
+            var id = $('#delete-message-id').val();
+
+            $.ajax({
+                url:'/delete-chat',
+                type:'POST',
+                data:{id:id},
+                success:function(res){
+                    if(res.success == true){
+                        $('#'+id).remove();
+                        // for closing the modal
+                        $('#deletemessageChat').modal('hide');
+
+                        // need to know the other user so broadcast
+                        socket.emit('chatDeleted',id);
+                    }
+                    else{
+                        alert(res.message);
+                    }
+                }
+            })
+
+        });
+
+        socket.on('chatmessageDeleted',(id)=>{
+            $('#'+id).remove();
+        })
 
     </script>
 
