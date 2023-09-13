@@ -56,6 +56,8 @@ user_route.post('/register', upload.single('image'), userController.register);
 user_route.post('/save-chat',userController.saveChat);
 // for deleting chat
 user_route.post('/delete-chat',userController.deleteChat);
+// for updating
+user_route.post('/update-chat',userController.updateChat);
 
 // doesnt match any route it will redirect to login page
 user_route.get('*', function (req, res) {

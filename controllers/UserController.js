@@ -123,7 +123,23 @@ const deleteChat = async (req, res) => {
         res.status(200).send({success:true});
         
     } catch (error) {
-        cres.status(400).send({success:false, message:"Error from clientside"});
+        res.status(400).send({success:false, message:"Error from clientside"});
+    }
+};
+
+// for updating chat
+const updateChat = async (req, res) => {
+    try {
+        
+        Chat.findByIdAndUpdate({_id:req.body.id},{
+            $set:{
+
+            }
+        });
+
+        res.status(200).send({success:true});
+    } catch (error) {
+        res.status(400).send({success:false, message:"Error from clienside"});
     }
 };
 
@@ -136,4 +152,5 @@ module.exports = {
     logout,
     saveChat,
     deleteChat,
+    updateChat,
 }

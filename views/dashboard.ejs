@@ -63,6 +63,28 @@
         </div>
     </div>
 
+    <div class="modal fade" id="updatemessageChat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="edit-message-form">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit-message-id">
+                        <input type="text" name="message" id="update-message-id">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
 
     <script>
@@ -102,9 +124,12 @@
                     addClass = 'another-user';
                 }
                 htmls += `<div class='` + addClass + `' id='`+chats[i]['_id']+`'>
-                            <h5>`+ chats[i]['message'] + ``;
+                            <h5><span>`+ chats[i]['message'] + `</span>`;
                 if (chats[i]['sender_id'] == sender_id) {
-                    htmls += `<i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+chats[i]['_id']+`' data-bs-target="#deletemessageChat" ></i> `;
+                    htmls += `
+                    <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+chats[i]['_id']+`' data-bs-target="#deletemessageChat" ></i> 
+                    <i class="fa fa-edit"  data-bs-toggle="modal" data-id='`+chats[i]['_id']+`' data-msg='`+chats[i]['message']+`' data-bs-target="#updatemessageChat" ></i>
+                    `;
                 }
 
                 htmls += `</h5>
@@ -148,8 +173,9 @@
                         $('#message').val('');
                         var chat = res.data.message;
                         let html = `<div class="current-user" id='`+res.data._id+`'>
-                            <h5>`+ chat + `
-                                <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+res.data._id+`' data-bs-target="#deletemessageChat" ></i>  
+                            <h5><span>`+ chat + `</span>
+                                <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+res.data._id+`' data-bs-target="#deletemessageChat" ></i>
+                                <i class="fa fa-edit"  data-bs-toggle="modal" data-id='`+res.data._id+`' data-msg='`+res.data.message+`' data-bs-target="#updatemessageChat" ></i>  
                             </h5>
                             </div>`;
 
@@ -171,6 +197,7 @@
                 let html = `<div class="another-user" id='`+data._id+`'>
                             <h5>`+ data.message + `
                                 <i class="fa fa-trash"  data-bs-toggle="modal" data-id='`+data._id+`' data-bs-target="#deletemessageChat" ></i>
+
                                 </h5>
                             </div>`;
 
@@ -228,6 +255,47 @@
         socket.on('chatmessageDeleted',(id)=>{
             $('#'+id).remove();
         })
+
+        // updating the message
+        $(document).on('click','.fa-edit',function(){
+            $('#edit-message-id').val($(this).attr('data-id'));
+            $('#update-message-id').val($(this).attr('data-msg'));
+            console.log("here in click faedit");
+        })
+
+        // sending the updating id to the server
+        $('#edit-message-form').submit(function(e){
+            e.preventDefault();
+
+            var id = $('#edit-message-id').val();
+            var msg = $('#update-message-id').val();
+
+            $.ajax({
+                url:'/update-chat',
+                type:'POST',
+                data:{id:id,message:msg},
+                success:function(res){
+                    if(res.success == true){
+    
+                        // for closing the modal
+                        $('#updatemessageChat').modal('hide');
+                        $('#'+id).find('span').text(msg);
+                        $('#'+id).find('.fa-edit').attr('data-msg',msg);
+                        // need to know the other user so broadcast
+                        socket.emit('chatUpdated',{id:id,message:msg});
+                    }
+                    else{
+                        alert(res.message);
+                    }
+                }
+            })
+
+        });
+
+        socket.on('chatmessageUpdated',(data)=>{
+            $('#'+data.id).find('span').text(data.message);
+        })
+
 
     </script>
 

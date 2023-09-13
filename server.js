@@ -52,6 +52,10 @@ userver.on('connection',async function(socket){
     socket.on('chatDeleted',(id)=>{
         socket.broadcast.emit('chatmessageDeleted',id);
     });
+    // for updating the message
+    socket.on('chatUpdated',(data)=>{
+        socket.broadcast.emit('chatmessageUpdated',data);
+    });
        
     
 });
