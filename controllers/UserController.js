@@ -55,6 +55,7 @@ const login = async (req, res) => {
             console.log(passwordMatch);
             if(passwordMatch){
                 req.session.user = userData;
+                res.cookie('user', JSON.stringify(userData));
                 console.log(req.session.user);
                 res.redirect('/dashboard')
                 
@@ -88,6 +89,7 @@ const loadDashboard = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
+        res.clearCookie('user');
         req.session.destroy();
         res.redirect('/');
     } catch (error) {
@@ -143,6 +145,15 @@ const updateChat = async (req, res) => {
     }
 };
 
+// for subscription page
+const subscription = (req, res) => {
+    try {
+        res.render('subscription')
+    } catch (error) {
+        
+    }
+};
+
 module.exports = {
     register,
     registerLoad,
@@ -153,4 +164,5 @@ module.exports = {
     saveChat,
     deleteChat,
     updateChat,
+    subscription,
 }

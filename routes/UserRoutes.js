@@ -5,6 +5,7 @@ const path = require('path');
 const userController = require('../controllers/UserController');
 const session = require('express-session');
 const auth = require('../middleware/auth');
+const cookie = require('cookie-parser');
 
 var user_route = express();
 
@@ -27,6 +28,7 @@ user_route.set('views', './views');
 
 user_route.use(express.static('public'));
 
+user_route.use(cookie());
 
 const storage = multer.diskStorage({
    
@@ -44,7 +46,7 @@ const upload = multer( { storage: storage });
 
 user_route.get('/', auth.isLogout,userController.loginLoad);
 user_route.post('/', userController.login);
-user_route.post('/logout', auth.isLogin,userController.logout);
+user_route.get('/logout', auth.isLogin,userController.logout);
 
 user_route.get('/dashboard',auth.isLogin ,userController.loadDashboard);
 
@@ -58,6 +60,9 @@ user_route.post('/save-chat',userController.saveChat);
 user_route.post('/delete-chat',userController.deleteChat);
 // for updating
 user_route.post('/update-chat',userController.updateChat);
+
+// for subscription page
+user_route.get('/subscription',userController.subscription);
 
 // doesnt match any route it will redirect to login page
 user_route.get('*', function (req, res) {

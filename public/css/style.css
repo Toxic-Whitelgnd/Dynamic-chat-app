@@ -12042,3 +12042,6 @@ a[data-toggle="collapse"] {
   color: red;
   font-size: 12px;
 }
+a{
+  text-decoration: none;
+}
