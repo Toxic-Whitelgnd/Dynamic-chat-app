@@ -1,0 +1,136 @@
+<%- include('layouts/header.ejs'); -%>
+
+    <h2 class="mb-4"> Groups
+    </h2>
+
+    <% if(typeof message !=='undefined' ){ %>
+        <p style="color: green;">
+            <%= message %>
+        </p>
+        <% } %>
+
+
+
+            <div class="container">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createGroupModal">
+                    Create Group
+                </button>
+
+                <table class="table mt-4">
+                    <thead>
+                        <tr>
+                            <td>S.No</td>
+                            <td>Image</td>
+                            <td>Name</td>
+                            <td>limit</td>
+                            <td>Members</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(groups.length> 0){
+                            for(let i=0; i<groups.length; i++){ %>
+                                <tr>
+                                    <td>
+                                        <%= i+1 %>
+                                    </td>
+                                    <td><img src="http://localhost:9999/<%=groups[i]['image']  %>" alt="grp"
+                                            width="100px" height="100px"></td>
+                                    <td>
+                                        <%= groups[i]['name'] %>
+                                    </td>
+                                    <td>
+                                        <%= groups[i]['limit'] %>
+                                    </td>
+                                    <td><a class="addMember cursor-pointer" data-id="<%= groups[i]['_id'] %>"
+                                            data-limit="<%= groups[i]['limit'] %>" data-bs-target="#addMembersmodal"
+                                            data-bs-toggle="modal">Members</a></td>
+                                    <td><a href="#">action</a></td>
+                                </tr>
+                                <% } } else{ %>
+                    <tbody>
+
+                        <td>No groups found</td>
+
+                    </tbody>
+
+                    <% } %>
+
+                        </tbody>
+
+                </table>
+
+                <div class="modal fade" id="createGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="" id="creategroup-form" enctype="multipart/form-data" method="post">
+                                <div class="modal-body">
+                                    <input type="text" name="name" required>
+                                    <input type="file" name="image" required>
+                                    <input type="number" name="limit" required>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-success">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="addMembersmodal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add Members</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="" id="addmembers-form" method="post">
+                                <input type="hidden" name="group_id" id="group_id">
+                                <input type="hidden" name="limit" id="limit">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td>Select</td>
+                                            <td>Name</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2">
+                                                <div class="addMembersls">
+                                                    <table class="table addMembersinTable">
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+
+
+            <%- include('layouts/footer.ejs'); -%>

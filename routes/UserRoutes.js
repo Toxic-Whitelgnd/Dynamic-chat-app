@@ -33,7 +33,7 @@ user_route.use(cookie());
 const storage = multer.diskStorage({
    
     destination:function (req, file, cb) {
-        cb(null, path.join(__dirname,'/public/images/'));
+        cb(null, path.join(__dirname,'../public/images/'));
     },
     filename:function (req, file, cb) {
         const fname = Date.now()+'-'+file.originalname;
@@ -60,6 +60,12 @@ user_route.post('/save-chat',userController.saveChat);
 user_route.post('/delete-chat',userController.deleteChat);
 // for updating
 user_route.post('/update-chat',userController.updateChat);
+
+// for groups get and post
+user_route.get('/groups',auth.isLogin, userController.groupsLoad);
+user_route.post('/groups',upload.single('image'), userController.groups);
+
+user_route.post('/get-members',auth.isLogin, userController.getMembers);
 
 // for subscription page
 user_route.get('/subscription',userController.subscription);

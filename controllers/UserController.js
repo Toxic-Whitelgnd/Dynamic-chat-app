@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const Chat = require("../models/ChatModel");
+const Group = require("../models/GroupModel");
 const bcrypt = require('bcrypt');
 
 const registerLoad = async (req, res) => {
@@ -18,7 +19,7 @@ const register = async (req, res) => {
             name: req.body.name,
             password: passwordHash,
             email: req.body.email,
-            image: 'images/'+req.body.image
+            image: 'images/'+req.file.filename,
             
         })
 
@@ -135,11 +136,50 @@ const updateChat = async (req, res) => {
         
         Chat.findByIdAndUpdate({_id:req.body.id},{
             $set:{
-
+                message:req.body.message,
             }
         });
 
         res.status(200).send({success:true});
+    } catch (error) {
+        res.status(400).send({success:false, message:"Error from clienside"});
+    }
+};
+
+// for groups tabs
+const groupsLoad = async (req, res) => {
+    try {
+        const groups = await Group.find({creator_id:req.session.user._id});
+        res.render('groups',{groups:groups});
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const groups = async (req, res) => {
+    try {
+        const grp =  new Group({
+            creator_id:req.session.user._id,
+            name:req.body.name,
+            image: "images/"+req.file.filename,
+            limit:req.body.limit,
+        })
+
+        const groups  = await grp.save();
+
+        res.render('groups',{message:req.body.name+'Group created successfully',groups:groups})
+    } catch (error) {
+        
+    }
+};
+
+// for getting members
+const getMembers = async (req, res) => {
+    try {
+        
+        var grpusers = await User.find({_id:{$nin:[req.session.user._id]}})
+
+        res.status(200).send({success:true,grpusers:grpusers});
     } catch (error) {
         res.status(400).send({success:false, message:"Error from clienside"});
     }
@@ -164,5 +204,8 @@ module.exports = {
     saveChat,
     deleteChat,
     updateChat,
+    groupsLoad,
+    groups,
+    getMembers,
     subscription,
 }
