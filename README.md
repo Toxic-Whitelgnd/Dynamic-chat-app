@@ -12,3 +12,5 @@
 ## Added update feature in the chat app
 # Day 6
 ## Moved the js int main.js to look cleaner and added cookies for the frontend access
+# Day 7
+## Created the feature of groups and displayed to user
