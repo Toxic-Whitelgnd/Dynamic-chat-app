@@ -12052,3 +12052,7 @@ a{
   width: 100%;
 
 }
+
+#add-member-error{
+  color: red;
+}

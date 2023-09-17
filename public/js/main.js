@@ -272,3 +272,28 @@ $('.addMember').click(function(){
 		}
 	})
 })
+
+// adding mbers to the grp 
+$('#addmembers-form').submit(function(e){
+	e.preventDefault();
+
+	var formData = $(this).serialize();
+	$.ajax({
+		type:'POST',
+		url:'/add-members',
+		data:formData,
+		success:function(res){
+			if(res.success == true){
+				$('#addMembersmodal').modal('hide');
+				$('#addmembers-form')[0].reset(); 
+				alert(res.msg);
+			}
+			else{
+				$('#add-member-error').text(res.msg);
+				setTimeout(()=>{
+					$('#add-member-error').text('');
+				},3000)
+			}
+		}
+	})
+});

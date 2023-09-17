@@ -1,6 +1,7 @@
 const User = require("../models/UserModel");
 const Chat = require("../models/ChatModel");
 const Group = require("../models/GroupModel");
+const Member = require("../models/MemberModel");
 const bcrypt = require('bcrypt');
 
 const registerLoad = async (req, res) => {
@@ -185,6 +186,43 @@ const getMembers = async (req, res) => {
     }
 };
 
+const addMembers = async (req, res) => {
+    try {
+        // need to edit from here
+        if(!req.body.members){
+            res.status(200).send({success:false,msg:"Please select members"});
+        }
+        else if(req.body.members.length > parseInt(req.body.limit)){
+            res.status(200).send({success:false,msg:"Please select less than the members limit"});
+        }
+        else{
+            var data = [];
+
+            const members = req.body.members;
+
+            await Member.deleteMany({group_id:req.body.group_id})
+
+            for(let i=0;i < members.length;i++){
+                data.push({
+                    group_id: req.body.group_id,
+                    user_id:members[i]
+                })
+            }
+
+            console.log(data);
+
+            await Member.insertMany(data);
+
+            res.status(200).send({success:true,msg:"Members added successfully"});
+        }
+
+        
+
+    } catch (error) {
+        res.status(400).send({success:false, message:"Error from clienside"});
+    }
+};
+
 // for subscription page
 const subscription = (req, res) => {
     try {
@@ -207,5 +245,6 @@ module.exports = {
     groupsLoad,
     groups,
     getMembers,
+    addMembers,
     subscription,
 }

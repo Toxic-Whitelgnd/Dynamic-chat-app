@@ -66,6 +66,7 @@ user_route.get('/groups',auth.isLogin, userController.groupsLoad);
 user_route.post('/groups',upload.single('image'), userController.groups);
 
 user_route.post('/get-members',auth.isLogin, userController.getMembers);
+user_route.post('/add-members',auth.isLogin, userController.addMembers);
 
 // for subscription page
 user_route.get('/subscription',userController.subscription);
