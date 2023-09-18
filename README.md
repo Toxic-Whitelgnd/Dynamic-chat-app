@@ -14,3 +14,9 @@
 ## Moved the js int main.js to look cleaner and added cookies for the frontend access
 # Day 7
 ## Created the feature of groups and displayed to user
+# Day 8
+## created the feature of adding members to group
+# Day 9
+## Gave the functionality of adding the member to the grp
+# Day 10
+## Fixed  some of the bugs
