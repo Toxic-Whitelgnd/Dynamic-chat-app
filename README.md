@@ -20,3 +20,5 @@
 ## Gave the functionality of adding the member to the grp
 # Day 10
 ## Fixed  some of the bugs
+# Day 11
+## Added the update  and delete members in group
