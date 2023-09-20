@@ -22,3 +22,5 @@
 ## Fixed  some of the bugs
 # Day 11
 ## Added the update  and delete members in group
+# Day 12
+## Fixing the getMmebers bug ;{
