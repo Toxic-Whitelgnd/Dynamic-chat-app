@@ -26,3 +26,5 @@
 ## Fixing the getMmebers bug ;{
 # Day 13
 ## Still Fixing ;[[
+# Day 14
+## Finnaly Fixed the bug Now good to go🚀
