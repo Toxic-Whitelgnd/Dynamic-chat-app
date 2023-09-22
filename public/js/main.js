@@ -245,20 +245,26 @@ $('.addMember').click(function(){
 	$('#group_id').val(grpid);
 	$('#limit').val(limit);
 
+	console.log("came here for testing",grpid);
+
 	$.ajax({
 		url:'/get-members',
 		type:'POST',
-		data:{groupid:grpid},
+		data:{group_id:grpid},
 		success:function(res){
+			console.log(res);
 			if(res.success == true){
 				let users = res.grpusers
 				let html = '';
-				console.log(users);
+				console.log(users.length);
 				for(let i=0;i<users.length;i++){
+
+					let isMmeberOfGrp = users[i]['member'].length > 0 ?true:false;
+
 					html +=`
 					<tr>
 					<td>
-					<input type="checkbox" name="members[]" id=`+users[i]['_id']+` />
+					<input type="checkbox" `+(isMmeberOfGrp?'checked':'')+`  name="members[]" value=`+users[i]['_id']+` />
 					</td>
 					<td>`+users[i]['name']+`</td>
 					</tr>

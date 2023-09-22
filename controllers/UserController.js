@@ -3,6 +3,7 @@ const Chat = require("../models/ChatModel");
 const Group = require("../models/GroupModel");
 const Member = require("../models/MemberModel");
 const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
 
 const registerLoad = async (req, res) => {
     try {
@@ -20,8 +21,8 @@ const register = async (req, res) => {
             name: req.body.name,
             password: passwordHash,
             email: req.body.email,
-            image: 'images/'+req.file.filename,
-            
+            image: 'images/' + req.file.filename,
+
         })
 
 
@@ -52,23 +53,23 @@ const login = async (req, res) => {
         const password = req.body.password;
 
         const userData = await User.findOne({ email: email }); // Now it contains email,password,image,username
-        if(userData){
-            const passwordMatch = await bcrypt.compare(password,userData.password);
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(password, userData.password);
             console.log(passwordMatch);
-            if(passwordMatch){
+            if (passwordMatch) {
                 req.session.user = userData;
                 res.cookie('user', JSON.stringify(userData));
                 console.log(req.session.user);
                 res.redirect('/dashboard')
-                
+
             }
             else {
-                res.render('login',{message:'Wrong Password'});
+                res.render('login', { message: 'Wrong Password' });
             }
 
         }
-        else{
-            res.render('login',{message:'Wrong credentials'});
+        else {
+            res.render('login', { message: 'Wrong credentials' });
         }
 
     } catch (error) {
@@ -79,11 +80,11 @@ const login = async (req, res) => {
 
 const loadDashboard = async (req, res) => {
     try {
-        var users = await User.find({_id:{$nin:[req.session.user._id]}})
-        res.render('dashboard',{user:req.session.user,users:users});
-       
-        
-       
+        var users = await User.find({ _id: { $nin: [req.session.user._id] } })
+        res.render('dashboard', { user: req.session.user, users: users });
+
+
+
     } catch (error) {
         console.log(error);
     }
@@ -105,16 +106,16 @@ const saveChat = async (req, res) => {
         var chat = new Chat(
             {
                 sender_id: req.body.sender_id,
-                reciver_id:req.body.reciver_id,
-                message:req.body.message,
+                reciver_id: req.body.reciver_id,
+                message: req.body.message,
             }
         );
 
         var newChat = await chat.save();
 
-        res.status(200).send({success:true, message:"chat inserted to db",data:newChat});
+        res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
     } catch (error) {
-        res.status(400).send({success:false, message:"Error from clientside"});
+        res.status(400).send({ success: false, message: "Error from clientside" });
     }
 }
 
@@ -122,36 +123,36 @@ const saveChat = async (req, res) => {
 const deleteChat = async (req, res) => {
     try {
 
-        await Chat.deleteOne({_id:req.body.id});
+        await Chat.deleteOne({ _id: req.body.id });
 
-        res.status(200).send({success:true});
-        
+        res.status(200).send({ success: true });
+
     } catch (error) {
-        res.status(400).send({success:false, message:"Error from clientside"});
+        res.status(400).send({ success: false, message: "Error from clientside" });
     }
 };
 
 // for updating chat
 const updateChat = async (req, res) => {
     try {
-        
-        Chat.findByIdAndUpdate({_id:req.body.id},{
-            $set:{
-                message:req.body.message,
+
+        Chat.findByIdAndUpdate({ _id: req.body.id }, {
+            $set: {
+                message: req.body.message,
             }
         });
 
-        res.status(200).send({success:true});
+        res.status(200).send({ success: true });
     } catch (error) {
-        res.status(400).send({success:false, message:"Error from clienside"});
+        res.status(400).send({ success: false, message: "Error from clienside" });
     }
 };
 
 // for groups tabs
 const groupsLoad = async (req, res) => {
     try {
-        const groups = await Group.find({creator_id:req.session.user._id});
-        res.render('groups',{groups:groups});
+        const groups = await Group.find({ creator_id: req.session.user._id });
+        res.render('groups', { groups: groups });
     } catch (error) {
         console.log(error.message);
     }
@@ -159,53 +160,98 @@ const groupsLoad = async (req, res) => {
 
 const groups = async (req, res) => {
     try {
-        const grp =  new Group({
-            creator_id:req.session.user._id,
-            name:req.body.name,
-            image: "images/"+req.file.filename,
-            limit:req.body.limit,
+        const grp = new Group({
+            creator_id: req.session.user._id,
+            name: req.body.name,
+            image: "images/" + req.file.filename,
+            limit: req.body.limit,
         })
 
-        const groups  = await grp.save();
+        const groups = await grp.save();
 
-        res.render('groups',{message:req.body.name+'Group created successfully',groups:groups})
+        res.render('groups', { message: req.body.name + 'Group created successfully', groups: groups })
     } catch (error) {
-        
+
     }
 };
 
 // for getting members
 const getMembers = async (req, res) => {
     try {
-        
-        var grpusers = await User.find({_id:{$nin:[req.session.user._id]}})
+        console.log("fkk here");
 
-        res.status(200).send({success:true,grpusers:grpusers});
+        console.log(req.body.group_id);
+
+        // bug is here need to fix it
+
+        try {
+            var users = await User.aggregate([
+                {
+                    $lookup: {
+                        from: "members",
+                        localField: "_id",
+                        foreignField: "user_id",
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$group_id",new mongoose.Types.ObjectId(req.body.group_id) ] }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: "member"
+                    }
+    
+                },
+                {
+                    $match: {
+                        "_id": {
+                            $nin: [new mongoose.Types.ObjectId(req.session.user._id)]
+                        }
+                    }
+                }
+            ]);
+        } catch (error) {
+            console.log(error);
+        }
+        
+
+        // var grpusers1 = await User.find({ _id: { $nin: [req.session.user._id] } })
+
+
+        console.log(users);
+
+        res.status(200).send({ success: true, grpusers: users });
     } catch (error) {
-        res.status(400).send({success:false, message:"Error from clienside"});
+        res.status(400).send({ success: false, message: "Error from clienside" });
     }
 };
 
 const addMembers = async (req, res) => {
     try {
         // need to edit from here
-        if(!req.body.members){
-            res.status(200).send({success:false,msg:"Please select members"});
+        if (!req.body.members) {
+            res.status(200).send({ success: false, msg: "Please select members" });
         }
-        else if(req.body.members.length > parseInt(req.body.limit)){
-            res.status(200).send({success:false,msg:"Please select less than the members limit"});
+        else if (req.body.members.length > parseInt(req.body.limit)) {
+            res.status(200).send({ success: false, msg: "Please select less than the members limit" });
         }
-        else{
+        else {
             var data = [];
 
             const members = req.body.members;
 
-            await Member.deleteMany({group_id:req.body.group_id})
+            console.log(members);
 
-            for(let i=0;i < members.length;i++){
+            await Member.deleteMany({ group_id: req.body.group_id })
+
+            for (let i = 0; i < members.length; i++) {
                 data.push({
                     group_id: req.body.group_id,
-                    user_id:members[i]
+                    user_id: members[i]
                 })
             }
 
@@ -213,13 +259,13 @@ const addMembers = async (req, res) => {
 
             await Member.insertMany(data);
 
-            res.status(200).send({success:true,msg:"Members added successfully"});
+            res.status(200).send({ success: true, msg: "Members added successfully" });
         }
 
-        
+
 
     } catch (error) {
-        res.status(400).send({success:false, message:"Error from clienside"});
+        res.status(400).send({ success: false, message: "Error from clienside" });
     }
 };
 
@@ -228,7 +274,7 @@ const subscription = (req, res) => {
     try {
         res.render('subscription')
     } catch (error) {
-        
+
     }
 };
 
