@@ -45,7 +45,9 @@
                                     <td><a class="addMember cursor-pointer" data-id="<%= groups[i]['_id'] %>"
                                             data-limit="<%= groups[i]['limit'] %>" data-bs-target="#addMembersmodal"
                                             data-bs-toggle="modal">Members</a></td>
-                                    <td><a href="#">action</a></td>
+                                    <td><a class="UpdateGroup" data-obj="<%= JSON.stringify(groups[i]) %>" data-toggle="modal" data-target="#UpdateGroupModal">
+                                        <i class="fa fa-pencil"></i>
+                                        </a></td>
                                 </tr>
                                 <% } } else{ %>
                     <tbody>
@@ -122,6 +124,36 @@
                                     <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Add</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="UpdateGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Update Group</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="" id="updategroup-form" enctype="multipart/form-data" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" id="update_group_id" required>
+                                    <input type="hidden" name="last_limit" id="last_limit" required>
+                                    <input type="text" name="name" id="group_name" required placeholder="Enter Group Name">
+                                    <input type="file" name="image" >
+                                    <input type="number" name="limit" min="1" id="group_limit" required placeholder="Enter Group Limit">
+
+                                    <p><b>(Note)</b>If you enter a limit less than the previous limit all the exisiting user will be removed</p>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-warning">Update</button>
                                 </div>
                             </form>
                         </div>

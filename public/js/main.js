@@ -303,3 +303,33 @@ $('#addmembers-form').submit(function(e){
 		}
 	})
 });
+
+// for updating the group
+$('.UpdateGroup').click(function(){
+	var obj = JSON.parse($(this).attr('data-obj'));
+
+	$('#last_limit').val(obj.limit);
+	$('#update_group_id').val(obj._id);
+	$('#group_name').val(obj.name);
+	$('#group_limit').val(obj.limit);
+
+})
+
+$('#updategroup-form').submit(function(e){
+	e.preventDefault();
+
+	$.ajax({
+		url:'/update-chat-group',
+		type:'POST',
+		data:new FormData(this),
+		contentType: false,
+		cache:false,
+		processData:false,
+		success:function(res){
+			alert(res.msg);
+			if(res.success == true) {
+				location.reload();
+			}
+		}
+	})
+})

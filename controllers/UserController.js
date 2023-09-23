@@ -115,7 +115,7 @@ const saveChat = async (req, res) => {
 
         res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
     } catch (error) {
-        res.status(400).send({ success: false, message: "Error from clientside" });
+        res.status(400).send({ success: false, message: error.message});
     }
 }
 
@@ -128,7 +128,7 @@ const deleteChat = async (req, res) => {
         res.status(200).send({ success: true });
 
     } catch (error) {
-        res.status(400).send({ success: false, message: "Error from clientside" });
+        res.status(400).send({ success: false, message: error.message});
     }
 };
 
@@ -144,7 +144,7 @@ const updateChat = async (req, res) => {
 
         res.status(200).send({ success: true });
     } catch (error) {
-        res.status(400).send({ success: false, message: "Error from clienside" });
+        res.status(400).send({ success: false, message: error.message});
     }
 };
 
@@ -171,7 +171,7 @@ const groups = async (req, res) => {
 
         res.render('groups', { message: req.body.name + 'Group created successfully', groups: groups })
     } catch (error) {
-
+        res.status(400).send({ success: false, message: error.message});
     }
 };
 
@@ -218,15 +218,11 @@ const getMembers = async (req, res) => {
             console.log(error);
         }
         
-
-        // var grpusers1 = await User.find({ _id: { $nin: [req.session.user._id] } })
-
-
         console.log(users);
 
         res.status(200).send({ success: true, grpusers: users });
     } catch (error) {
-        res.status(400).send({ success: false, message: "Error from clienside" });
+        res.status(400).send({ success: false, message: error.message});
     }
 };
 
@@ -265,9 +261,47 @@ const addMembers = async (req, res) => {
 
 
     } catch (error) {
-        res.status(400).send({ success: false, message: "Error from clienside" });
+        res.status(400).send({ success: false, message: error.message});
     }
 };
+
+// for updating the chat group
+const updateChatGroup = async (req, res) => {
+    try {
+        
+        if(parseInt(req.body.limit) < parseInt(req.body.last_limit)){
+            await Group.deleteMany({group_id:req.body.id});
+        }
+
+        var updateObj;
+
+        if(req.file != undefined){
+            updateObj = {
+                name: req.body.name,
+                image:'images/'+req.file.filename,
+                limit:req.body.limit,
+            }
+        }
+        else{
+            updateObj = {
+                name: req.body.name,
+                limit:req.body.limit,
+            }
+        }
+
+        await Group.findByIdAndUpdate({
+            _id:req.body.id,
+        },{
+            $set:updateObj,
+        })
+
+        res.status(200).send({ success: true, msg: "Groups updated successfully" });
+
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message});
+    }
+};
+
 
 // for subscription page
 const subscription = (req, res) => {
@@ -292,5 +326,6 @@ module.exports = {
     groups,
     getMembers,
     addMembers,
+    updateChatGroup,
     subscription,
 }
