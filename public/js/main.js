@@ -333,3 +333,45 @@ $('#updategroup-form').submit(function(e){
 		}
 	})
 })
+
+// for deleting caht group
+$('.DeleteGroup').click(function(){
+	$('#delete_group_id').val($(this).attr('data-id'));
+	$('#delete_group_name').text($(this).attr('data-name'));
+})
+
+$('#deletegroup-form').submit(function(event){
+	event.preventDefault();
+	var formdata = $(this).serialize();
+	$.ajax({
+		url:"/delete-chat-group",
+		type:'post',
+		data: formdata,
+		success:function(res){
+			alert(res.msg);
+			if(res.success == true){
+				location.reload();
+			}
+		}
+	})
+});
+
+// for making a sharable copy link
+$('.CopyGroup').click(function(){
+
+	$(this).prepend('<span class="copied_text"> copied </span>');
+
+	var grpid = $(this).attr('data-id');
+	var url = window.location.host+'/share-group/'+grpid;
+	var temp = $('<input>')
+	$('body').append(temp);
+	temp.val(url).select();
+	document.execCommand('copy');
+
+	temp.remove();
+
+	setTimeout(function(){
+		$('.copied_text').remove();
+	},2000);
+
+})

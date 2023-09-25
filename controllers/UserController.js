@@ -302,6 +302,21 @@ const updateChatGroup = async (req, res) => {
     }
 };
 
+// for deleting chat group form
+const deleteChatGroup = async (req, res) => {
+    try {
+        
+        await Group.deleteOne({_id: req.body.id});
+
+        await Member.deleteMany({group_id:req.body.id});
+      
+
+        res.status(200).send({ success: true, msg: "Groups deleted successfully" });
+
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message});
+    }
+};
 
 // for subscription page
 const subscription = (req, res) => {
@@ -327,5 +342,6 @@ module.exports = {
     getMembers,
     addMembers,
     updateChatGroup,
+    deleteChatGroup,
     subscription,
 }

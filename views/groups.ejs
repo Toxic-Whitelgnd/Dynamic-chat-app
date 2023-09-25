@@ -45,9 +45,20 @@
                                     <td><a class="addMember cursor-pointer" data-id="<%= groups[i]['_id'] %>"
                                             data-limit="<%= groups[i]['limit'] %>" data-bs-target="#addMembersmodal"
                                             data-bs-toggle="modal">Members</a></td>
-                                    <td><a class="UpdateGroup" data-obj="<%= JSON.stringify(groups[i]) %>" data-toggle="modal" data-target="#UpdateGroupModal">
-                                        <i class="fa fa-pencil"></i>
-                                        </a></td>
+                                    <td><a class="UpdateGroup" data-obj="<%= JSON.stringify(groups[i]) %>"
+                                            data-toggle="modal" data-target="#UpdateGroupModal">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a class="DeleteGroup" data-id="<%= groups[i]['_id']%>"
+                                            data-name="<%= groups[i]['name']%>" data-bs-toggle="modal"
+                                            data-bs-target="#DeleteGroupModal">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                        <a class="CopyGroup" data-id="<%= groups[i]['_id']%>"
+                                            data-name="<%= groups[i]['name']%>" >
+                                            <i class="fa fa-copy"></i>
+                                        </a>
+                                    </td>
                                 </tr>
                                 <% } } else{ %>
                     <tbody>
@@ -143,17 +154,45 @@
                                 <div class="modal-body">
                                     <input type="hidden" name="id" id="update_group_id" required>
                                     <input type="hidden" name="last_limit" id="last_limit" required>
-                                    <input type="text" name="name" id="group_name" required placeholder="Enter Group Name">
-                                    <input type="file" name="image" >
-                                    <input type="number" name="limit" min="1" id="group_limit" required placeholder="Enter Group Limit">
+                                    <input type="text" name="name" id="group_name" required
+                                        placeholder="Enter Group Name">
+                                    <input type="file" name="image">
+                                    <input type="number" name="limit" min="1" id="group_limit" required
+                                        placeholder="Enter Group Limit">
 
-                                    <p><b>(Note)</b>If you enter a limit less than the previous limit all the exisiting user will be removed</p>
+                                    <p><b>(Note)</b>If you enter a limit less than the previous limit all the exisiting
+                                        user will be removed</p>
                                 </div>
 
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-warning">Update</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="DeleteGroupModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete Group</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="" id="deletegroup-form" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" id="delete_group_id" required>
+                                    <p>Are you sure want to delete <b id="delete_group_name"> </b>Group?</p>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
                                 </div>
                             </form>
                         </div>
