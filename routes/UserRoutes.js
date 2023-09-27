@@ -70,6 +70,13 @@ user_route.post('/add-members',auth.isLogin, userController.addMembers);
 
 user_route.post('/update-chat-group',auth.isLogin,upload.single('image'),userController.updateChatGroup);
 user_route.post('/delete-chat-group',auth.isLogin,userController.deleteChatGroup);
+user_route.get('/share-group/:id',userController.shareGroup);
+user_route.post('/join-group',userController.joinGroup);
+user_route.get('/group-chat',auth.isLogin,userController.groupChat);
+
+user_route.post('/group-chat-save',userController.saveGroupChat);
+user_route.post('/load-group-chat',userController.loadGroupChat);
+user_route.post('/delete-group-chat',userController.deleteGroupChat);
 
 // for subscription page
 user_route.get('/subscription',userController.subscription);

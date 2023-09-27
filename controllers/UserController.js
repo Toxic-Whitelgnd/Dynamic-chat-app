@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const Chat = require("../models/ChatModel");
 const Group = require("../models/GroupModel");
 const Member = require("../models/MemberModel");
+const GroupChat = require("../models/GroupChatModel");
 const bcrypt = require('bcrypt');
 const mongoose = require("mongoose");
 
@@ -317,7 +318,112 @@ const deleteChatGroup = async (req, res) => {
         res.status(400).send({ success: false, message: error.message});
     }
 };
+// for accessing the shre group link
+const shareGroup = async (req, res) => {
+    try {
+        
+        var groupdata = await Group.findOne({_id: req.params.id});
+        if(!groupdata){
+            res.render('error', { message:"404 NOT FOUND"});
+        }
+        else if(req.session.user == undefined){
+            res.render('error', { message:"You need to Login to Access the link"});
+        }
+        else{
+            var totalmembers = await Member.find({group_id:req.params.id}).count();
+            var availabe = groupdata.limit - totalmembers;
 
+            var isOwner = groupdata.creator_id == req.session.user._id ? true : false;
+            var isJoined = await Member.find({group_id:req.params.id , user_id:req.session.user._id}).count();
+
+            res.render('sharelinkgroup', {group:groupdata,totalmembers:totalmembers,availabe:availabe,isOwner:isOwner,isJoined:isJoined});
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+};
+
+//for joining the group link
+const joinGroup = async (req, res) => {
+    try {
+        
+        const members = new Member({
+            group_id:req.group_id,
+            user_id:req.session.user._id
+        });
+
+        await members.save();
+        
+        console.log("fk the members");
+        console.log(members);
+
+        res.status(200).send({ success: true, msg: "Congratulations you have joined the group sucessfully" });
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+};
+// starting a group chat
+const groupChat = async (req, res) => {
+    try {
+        
+        const mygroups = await Group.find({creator_id:req.session.user._id});
+        const joinedgroups = await Member.find({user_id:req.session.user._id}).populate('group_id');
+
+        console.log("from joined grp chats");
+        console.log(joinedgroups);
+        res.render('group-chat',{mygrp:mygroups,joinedgrp:joinedgroups});
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+}
+// saving group chat information
+const saveGroupChat = async (req, res) => {
+    try {
+        
+        var gchat = new GroupChat({
+            sender_id:req.body.sender_id,
+            group_id:req.body.group_id,
+            message:req.body.message
+        })
+
+        var newGchat = await gchat.save();
+
+        res.status(200).send({ success: true , gChat:newGchat });
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+};
+
+// for loading into the container
+const loadGroupChat = async (req, res) => {
+    try {
+        
+        var grpchat = await GroupChat.find({group_id:req.body.group_id})
+
+        console.log(grpchat);
+
+        res.status(200).send({ success: true , grpchat: grpchat });
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+};
+// for deleting the grp chat msg
+const deleteGroupChat = async (req, res) => {
+    try {
+        
+        await GroupChat.deleteOne({_id:req.body.id})
+
+        res.status(200).send({ success: true , msg:'chat deleted'});
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+};
 // for subscription page
 const subscription = (req, res) => {
     try {
@@ -343,5 +449,11 @@ module.exports = {
     addMembers,
     updateChatGroup,
     deleteChatGroup,
+    shareGroup,
+    joinGroup,
+    groupChat,
+    saveGroupChat,
+    loadGroupChat,
+    deleteGroupChat,
     subscription,
 }
