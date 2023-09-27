@@ -401,6 +401,7 @@ $('.join-now').click(function(){
 	})
 });
 
+// group chat js starts here
 // group chat container js
 $('.group-chat-list').click(function(){
 	$('.group-start-head').hide();
@@ -433,9 +434,24 @@ $('#group-chat-form').submit(function (e) {
 				let html = `<div class="current-user" id='` + res.gChat._id + `'>
                             <h5><span>`+ gchat + `</span>
                                 <i class="fa fa-trash deletegprmsg"  data-bs-toggle="modal" data-id='`+ res.gChat._id + `' data-bs-target="#deletegroupChat" ></i>
-                                <i class="fa fa-edit"  data-bs-toggle="modal" data-id='`+ res.gChat._id + `' data-msg='` + res.gChat.message + `' data-bs-target="#updatemessageChat" ></i>  
-                            </h5>
-                            </div>`;
+                                <i class="fa fa-edit updategrpmsg"  data-bs-toggle="modal" data-id='`+ res.gChat._id + `' data-msg='` + res.gChat.message + `' data-bs-target="#updatemessageGroupChat" ></i>  `
+								
+								html +=`
+								</h5>`;
+				
+								var date = new Date(res.gChat.createdAt);
+								let cdate = date.getDate();
+								let cmonth = (date.getMonth()+1) > 9?(date.getMonth()+1):'0'+(date.getMonth()+1);//indx start at 0 so +1
+								let cyear = date.getFullYear();
+								let getfulldate = cdate+':'+cmonth+':'+cyear;
+				
+								
+								html +=`<div class="user-data"><b>Me</b>`+getfulldate+`</div>`;
+							
+			
+				
+								html +=`
+								</div>`
 
 				$('#group-chat-container').append(html);
 				// broadcasting the new msg
@@ -453,11 +469,28 @@ $('#group-chat-form').submit(function (e) {
 socket.on('loadnewGroupChat', function(data){
 	if(global_group_id == data.group_id){
 		let html2 = `<div class="another-user" id='` + data._id + `'>
-		<h5><span>`+ data.message + `</span>
-			<i class="fa fa-trash deletegprmsg"  data-bs-toggle="modal" data-id='`+ data._id + `' data-bs-target="#deletegroupChat" ></i>
-			<i class="fa fa-edit"  data-bs-toggle="modal" data-id='`+ data._id + `' data-msg='` + data.message + `' data-bs-target="#updatemessageChat" ></i>  
-		</h5>
-		</div>`
+		<h5><span>`+ data.message + `</span>`;
+			
+		html2 +=`
+				
+				</h5>`;
+
+				var date = new Date(data.createdAt);
+				let cdate = date.getDate();
+				let cmonth = (date.getMonth()+1) > 9?(date.getMonth()+1):'0'+(date.getMonth()+1);//indx start at 0 so +1
+				let cyear = date.getFullYear();
+				let getfulldate = cdate+':'+cmonth+':'+cyear;
+
+				
+				
+					html2 +=`<div class="user-data">
+					<img src="`+data.sender_id.image+`" class="user-chat-image" />
+					<b>`+data.sender_id.name+`</b>`+getfulldate+`
+					</div>`;
+				
+
+				html2 +=`
+				</div>`
 
 		$('#group-chat-container').append(html2);
 		scrollGroupToBottom();
@@ -474,24 +507,44 @@ function loadGroupChat(){
 			if (res.success == true) {
 				var chats = res.grpchat;
 
-				
+				// console.log(res);
+				console.log(chats);
 
 				var html = "";
 				for(let i=0;i<chats.length;i++){
 					let className = 'another-user';
-					if(chats[i]['sender_id'] == sender_id){
+					if(chats[i]['sender_id']._id == sender_id){
 						className = "current-user";
 					}
 					html += `<div class='`+className+`'
 					id='` +chats[i]['_id'] + `'>
 				<h5><span>`+ chats[i]['message'] + `</span>`;
-				if(chats[i]['sender_id'] == sender_id){
+				if(chats[i]['sender_id']._id == sender_id){
 					html += `<i class="fa fa-trash deletegprmsg"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-bs-target="#deletegroupChat" ></i>
-					<i class="fa fa-edit"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-msg='` + chats[i]['message'] + `' data-bs-target="#updatemessageChat" ></i>`
+					<i class="fa fa-edit updategrpmsg"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-msg='` + chats[i]['message'] + `' data-bs-target="#updatemessageGroupChat" ></i>`
 				}
 						
 				html +=`
-				</h5>
+				
+				</h5>`;
+
+				var date = new Date(chats[i]['createdAt']);
+				let cdate = date.getDate();
+				let cmonth = (date.getMonth()+1) > 9?(date.getMonth()+1):'0'+(date.getMonth()+1);//indx start at 0 so +1
+				let cyear = date.getFullYear();
+				let getfulldate = cdate+':'+cmonth+':'+cyear;
+
+				if(chats[i]['sender_id']._id == sender_id){
+					html +=`<div class="user-data"><b>Me</b>`+getfulldate+`</div>`;
+				}
+				else{
+					html +=`<div class="user-data">
+					<img src="`+chats[i]['sender_id'].image+`" class="user-chat-image" />
+					<b>`+chats[i]['sender_id'].name+`</b>`+getfulldate+`
+					</div>`;
+				}
+
+				html +=`
 				</div>`
 				}
 				$('#group-chat-container').html(html);
@@ -550,4 +603,40 @@ function scrollGroupToBottom() {
 	)
 };
 
+// update grp chat
+$(document).on('click','.updategrpmsg',function(){
 
+	$('#edit-group-message-id').val($(this).attr('data-id'))
+	$('#update-group-message-id').val($(this).attr('data-msg'));
+});
+
+$('#edit-group-message-form').submit(function(e){
+	e.preventDefault();
+
+	var gid = $('#edit-group-message-id').val();
+	var msg = $('#update-group-message-id').val();
+
+	$.ajax({
+		type:'post',
+		url:'/update-group-chat',
+		data:{id:gid,msg:msg},
+		success:function(res){
+			if(res.success){
+				$('#'+gid).find('span').text(msg);
+				$('#'+gid).find('.updategrpmsg').attr('data-msg',msg);
+				$('#updatemessageGroupChat').modal('hide');
+
+				socket.emit('GroupchatUpdated',{id:gid,msg:msg});
+			}
+			else{
+				alert(res.msg);
+			}
+		}
+
+
+	})
+});
+
+socket.on('GroupchatUpdatedmsg', (data)=>{
+	$('#'+data.id).find('span').text(data.msg);
+});

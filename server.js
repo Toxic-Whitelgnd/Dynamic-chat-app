@@ -66,6 +66,11 @@ userver.on('connection',async function(socket){
     socket.on('GroupchatDeleted',(data)=>{
         socket.broadcast.emit('GroupchatDeletedmsg',data);
     })
+
+    // getting the broadcast from updated grp msg
+    socket.on('GroupchatUpdated',(data)=>{
+        socket.broadcast.emit('GroupchatUpdatedmsg',data);
+    });
 });
 
 app.use('/',useroute);

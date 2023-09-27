@@ -72,5 +72,28 @@
         </div>
     </div>
 
+    <!--Update grp msg-->
+    <div class="modal fade" id="updatemessageGroupChat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="edit-group-message-form">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit-group-message-id">
+                        <input type="text" name="message" id="update-group-message-id">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     <%- include('layouts/footer.ejs'); -%>

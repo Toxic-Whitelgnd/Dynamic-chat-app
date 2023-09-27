@@ -391,7 +391,9 @@ const saveGroupChat = async (req, res) => {
 
         var newGchat = await gchat.save();
 
-        res.status(200).send({ success: true , gChat:newGchat });
+        var cChat = await GroupChat.findOne({_id:newGchat._id}).populate('sender_id');
+
+        res.status(200).send({ success: true , gChat:cChat });
 
     } catch (error) {
         res.status(400).send({ success: false, msg: error.message});
@@ -402,7 +404,7 @@ const saveGroupChat = async (req, res) => {
 const loadGroupChat = async (req, res) => {
     try {
         
-        var grpchat = await GroupChat.find({group_id:req.body.group_id})
+        var grpchat = await GroupChat.find({group_id:req.body.group_id}).populate('sender_id');
 
         console.log(grpchat);
 
@@ -419,6 +421,24 @@ const deleteGroupChat = async (req, res) => {
         await GroupChat.deleteOne({_id:req.body.id})
 
         res.status(200).send({ success: true , msg:'chat deleted'});
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error.message});
+    }
+};
+
+// for updating the grp chat msg
+const updateGroupChat = async (req, res) => {
+    try {
+        
+        await GroupChat.findByIdAndUpdate({_id:req.body.id},
+            {
+                $set:{
+                    message:req.body.msg,
+                }
+            })
+
+        res.status(200).send({ success: true , msg:'chat updated successfully'});
 
     } catch (error) {
         res.status(400).send({ success: false, msg: error.message});
@@ -455,5 +475,6 @@ module.exports = {
     saveGroupChat,
     loadGroupChat,
     deleteGroupChat,
+    updateGroupChat,
     subscription,
 }

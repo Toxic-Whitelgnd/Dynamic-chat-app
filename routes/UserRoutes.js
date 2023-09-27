@@ -77,6 +77,7 @@ user_route.get('/group-chat',auth.isLogin,userController.groupChat);
 user_route.post('/group-chat-save',userController.saveGroupChat);
 user_route.post('/load-group-chat',userController.loadGroupChat);
 user_route.post('/delete-group-chat',userController.deleteGroupChat);
+user_route.post('/update-group-chat',userController.updateGroupChat);
 
 // for subscription page
 user_route.get('/subscription',userController.subscription);
