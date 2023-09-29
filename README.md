@@ -34,3 +34,9 @@
 ## Added delete chat group form
 # Day 17
 ## Added sharable link and group chat container
+# Day 18
+## Added the feature of update and delete in the grp chat 
+# Day 19
+## Added the user image and the name
+# Day 20
+## need to style the web app
