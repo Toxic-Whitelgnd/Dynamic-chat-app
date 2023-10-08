@@ -22,6 +22,30 @@ const UserSchema = new mongoose.Schema({
     is_online:{
         type:String,
         default:'0',
+    },
+    is_supreme_user:{
+        type:String,
+        default:'0',
+    },
+    is_deulex_user:{
+        type:String,
+        default:'0',
+    },
+    is_ultra_deulex_user:{
+        type:String,
+        default:'0',
+    },
+    payment_id:{
+        type:String,
+        default:'',
+    },
+    order_id:{
+        type:String,
+        default:'',
+    },
+    payment_signature:{
+        type:String,
+        default:'',
     }
 },
 {timestamps:true}

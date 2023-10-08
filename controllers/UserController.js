@@ -5,6 +5,9 @@ const Member = require("../models/MemberModel");
 const GroupChat = require("../models/GroupChatModel");
 const bcrypt = require('bcrypt');
 const mongoose = require("mongoose");
+const Razorpay = require('razorpay');
+const { response } = require("../routes/UserRoutes");
+require('dotenv').config();
 
 const registerLoad = async (req, res) => {
     try {
@@ -116,7 +119,7 @@ const saveChat = async (req, res) => {
 
         res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 }
 
@@ -129,7 +132,7 @@ const deleteChat = async (req, res) => {
         res.status(200).send({ success: true });
 
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
@@ -145,7 +148,7 @@ const updateChat = async (req, res) => {
 
         res.status(200).send({ success: true });
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
@@ -172,7 +175,7 @@ const groups = async (req, res) => {
 
         res.render('groups', { message: req.body.name + 'Group created successfully', groups: groups })
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
@@ -183,7 +186,7 @@ const getMembers = async (req, res) => {
 
         console.log(req.body.group_id);
 
-        // bug is here need to fix it
+        
 
         try {
             var users = await User.aggregate([
@@ -197,7 +200,7 @@ const getMembers = async (req, res) => {
                                 $match: {
                                     $expr: {
                                         $and: [
-                                            { $eq: ["$group_id",new mongoose.Types.ObjectId(req.body.group_id) ] }
+                                            { $eq: ["$group_id", new mongoose.Types.ObjectId(req.body.group_id)] }
                                         ]
                                     }
                                 }
@@ -205,7 +208,7 @@ const getMembers = async (req, res) => {
                         ],
                         as: "member"
                     }
-    
+
                 },
                 {
                     $match: {
@@ -218,12 +221,12 @@ const getMembers = async (req, res) => {
         } catch (error) {
             console.log(error);
         }
-        
+
         console.log(users);
 
         res.status(200).send({ success: true, grpusers: users });
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
@@ -262,81 +265,81 @@ const addMembers = async (req, res) => {
 
 
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
 // for updating the chat group
 const updateChatGroup = async (req, res) => {
     try {
-        
-        if(parseInt(req.body.limit) < parseInt(req.body.last_limit)){
-            await Group.deleteMany({group_id:req.body.id});
+
+        if (parseInt(req.body.limit) < parseInt(req.body.last_limit)) {
+            await Group.deleteMany({ group_id: req.body.id });
         }
 
         var updateObj;
 
-        if(req.file != undefined){
+        if (req.file != undefined) {
             updateObj = {
                 name: req.body.name,
-                image:'images/'+req.file.filename,
-                limit:req.body.limit,
+                image: 'images/' + req.file.filename,
+                limit: req.body.limit,
             }
         }
-        else{
+        else {
             updateObj = {
                 name: req.body.name,
-                limit:req.body.limit,
+                limit: req.body.limit,
             }
         }
 
         await Group.findByIdAndUpdate({
-            _id:req.body.id,
-        },{
-            $set:updateObj,
+            _id: req.body.id,
+        }, {
+            $set: updateObj,
         })
 
         res.status(200).send({ success: true, msg: "Groups updated successfully" });
 
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 
 // for deleting chat group form
 const deleteChatGroup = async (req, res) => {
     try {
-        
-        await Group.deleteOne({_id: req.body.id});
 
-        await Member.deleteMany({group_id:req.body.id});
-      
+        await Group.deleteOne({ _id: req.body.id });
+
+        await Member.deleteMany({ group_id: req.body.id });
+
 
         res.status(200).send({ success: true, msg: "Groups deleted successfully" });
 
     } catch (error) {
-        res.status(400).send({ success: false, message: error.message});
+        res.status(400).send({ success: false, message: error.message });
     }
 };
 // for accessing the shre group link
 const shareGroup = async (req, res) => {
     try {
-        
-        var groupdata = await Group.findOne({_id: req.params.id});
-        if(!groupdata){
-            res.render('error', { message:"404 NOT FOUND"});
+
+        var groupdata = await Group.findOne({ _id: req.params.id });
+        if (!groupdata) {
+            res.render('error', { message: "404 NOT FOUND" });
         }
-        else if(req.session.user == undefined){
-            res.render('error', { message:"You need to Login to Access the link"});
+        else if (req.session.user == undefined) {
+            res.render('error', { message: "You need to Login to Access the link" });
         }
-        else{
-            var totalmembers = await Member.find({group_id:req.params.id}).count();
+        else {
+            var totalmembers = await Member.find({ group_id: req.params.id }).count();
             var availabe = groupdata.limit - totalmembers;
 
             var isOwner = groupdata.creator_id == req.session.user._id ? true : false;
-            var isJoined = await Member.find({group_id:req.params.id , user_id:req.session.user._id}).count();
+            var isJoined = await Member.find({ group_id: req.params.id, user_id: req.session.user._id }).count();
 
-            res.render('sharelinkgroup', {group:groupdata,totalmembers:totalmembers,availabe:availabe,isOwner:isOwner,isJoined:isJoined});
+            res.render('sharelinkgroup', { group: groupdata, totalmembers: totalmembers, availabe: availabe, isOwner: isOwner, isJoined: isJoined });
         }
 
     } catch (error) {
@@ -347,101 +350,101 @@ const shareGroup = async (req, res) => {
 //for joining the group link
 const joinGroup = async (req, res) => {
     try {
-        
+
         const members = new Member({
-            group_id:req.group_id,
-            user_id:req.session.user._id
+            group_id: req.group_id,
+            user_id: req.session.user._id
         });
 
         await members.save();
-        
+
         console.log("fk the members");
         console.log(members);
 
         res.status(200).send({ success: true, msg: "Congratulations you have joined the group sucessfully" });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 };
 // starting a group chat
 const groupChat = async (req, res) => {
     try {
-        
-        const mygroups = await Group.find({creator_id:req.session.user._id});
-        const joinedgroups = await Member.find({user_id:req.session.user._id}).populate('group_id');
+
+        const mygroups = await Group.find({ creator_id: req.session.user._id });
+        const joinedgroups = await Member.find({ user_id: req.session.user._id }).populate('group_id');
 
         console.log("from joined grp chats");
         console.log(joinedgroups);
-        res.render('group-chat',{mygrp:mygroups,joinedgrp:joinedgroups});
+        res.render('group-chat', { mygrp: mygroups, joinedgrp: joinedgroups });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 }
 // saving group chat information
 const saveGroupChat = async (req, res) => {
     try {
-        
+
         var gchat = new GroupChat({
-            sender_id:req.body.sender_id,
-            group_id:req.body.group_id,
-            message:req.body.message
+            sender_id: req.body.sender_id,
+            group_id: req.body.group_id,
+            message: req.body.message
         })
 
         var newGchat = await gchat.save();
 
-        var cChat = await GroupChat.findOne({_id:newGchat._id}).populate('sender_id');
+        var cChat = await GroupChat.findOne({ _id: newGchat._id }).populate('sender_id');
 
-        res.status(200).send({ success: true , gChat:cChat });
+        res.status(200).send({ success: true, gChat: cChat });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 };
 
 // for loading into the container
 const loadGroupChat = async (req, res) => {
     try {
-        
-        var grpchat = await GroupChat.find({group_id:req.body.group_id}).populate('sender_id');
+
+        var grpchat = await GroupChat.find({ group_id: req.body.group_id }).populate('sender_id');
 
         console.log(grpchat);
 
-        res.status(200).send({ success: true , grpchat: grpchat });
+        res.status(200).send({ success: true, grpchat: grpchat });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 };
 // for deleting the grp chat msg
 const deleteGroupChat = async (req, res) => {
     try {
-        
-        await GroupChat.deleteOne({_id:req.body.id})
 
-        res.status(200).send({ success: true , msg:'chat deleted'});
+        await GroupChat.deleteOne({ _id: req.body.id })
+
+        res.status(200).send({ success: true, msg: 'chat deleted' });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 };
 
 // for updating the grp chat msg
 const updateGroupChat = async (req, res) => {
     try {
-        
-        await GroupChat.findByIdAndUpdate({_id:req.body.id},
+
+        await GroupChat.findByIdAndUpdate({ _id: req.body.id },
             {
-                $set:{
-                    message:req.body.msg,
+                $set: {
+                    message: req.body.msg,
                 }
             })
 
-        res.status(200).send({ success: true , msg:'chat updated successfully'});
+        res.status(200).send({ success: true, msg: 'chat updated successfully' });
 
     } catch (error) {
-        res.status(400).send({ success: false, msg: error.message});
+        res.status(400).send({ success: false, msg: error.message });
     }
 };
 // for subscription page
@@ -452,6 +455,87 @@ const subscription = (req, res) => {
 
     }
 };
+
+const paymentPage = async (req, res) => {
+    try {
+
+        let amount = req.body.amt;
+        console.log("came to server backend");
+        console.log(amount);
+        // parseInt(amount);
+        try {
+            var instance = new Razorpay({ key_id: "rzp_test_AZ9LyozDGv5aSK", key_secret: "k7q5Fkbd9EAoJaJ5JPl5dzrH" });
+
+            var options = {
+                amount:  (amount)*100,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: "order_rcptid_11"
+              };
+              instance.orders.create(options, function(err, order) {
+                console.log(order);
+                res.send({success:true,order:order})
+              });
+        } catch (error) {
+            console.log(error);
+        }
+
+        
+
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error});
+    }
+}
+
+const updatePremiumUser = async function(req,res){
+    try {
+        
+        var paymentuser = req.body.userid;
+        var orderamt = req.body.orderAmt;
+        var paymentid = req.body.paymentid;
+        var orderid = req.body.orderid;
+        var paymentsignature = req.body.paymentsignature;
+        var tags = 0;
+        var tagd = 0;
+        var tagu = 0;
+        var tag ;
+        console.log(orderamt);
+        console.log(typeof(orderamt));
+        console.log(typeof('99'));
+        if(orderamt === '9900'){
+            tag = 'S';
+            tags = 1;
+        }
+        else if(orderamt === '39900'){
+            tag = 'D';
+            tagd = 1;
+        }
+        else{
+            tag = 'U';
+            tagu = 1;
+        }
+
+        console.log(tags, tagd, tagu);
+
+        var updatePremUser = await User.findByIdAndUpdate({
+            _id: paymentuser
+        },{
+            $set:{
+                payment_id:paymentid,
+                order_id:orderid,
+                payment_signature:paymentsignature,
+                is_supreme_user:tags,
+                is_deulex_user:tagd,
+                is_ultra_deulex_user:tagu
+            }
+        })
+        console.log(updatePremUser);
+        res.status(200).send({success:true, message:"good to go!", tag:tag});
+
+    } catch (error) {
+        res.status(400).send({ success: false, msg: error});
+    }
+}
 
 module.exports = {
     register,
@@ -477,4 +561,6 @@ module.exports = {
     deleteGroupChat,
     updateGroupChat,
     subscription,
+    paymentPage,
+    updatePremiumUser,
 }

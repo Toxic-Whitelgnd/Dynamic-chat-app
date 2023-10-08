@@ -1,4 +1,76 @@
 <%- include('layouts/header.ejs'); -%>
-<h1>Subscribe to get a FanGirl chats</h1>
+    <h1>Subscribe to get a FanGirl chats</h1>
 
-<%- include('layouts/footer.ejs'); -%>
+    <!-- TODO:NEED TO RENDER THE PAGE WITH THE TYPE OF PLAN SELECTED NEED  TO BE DONE TONIGHT -->
+
+    <div class="colss">
+        <!-- for first type of subscription method -->
+        <div class="col" ontouchstart="this.classList.toggle('hover');">
+            <div class="container1">
+                <div class="front"
+                    style="background-image: url(https://images.unsplash.com/photo-1503104834685-7205e8607eb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                    <div class="inner">
+                        <p>Supreme</p>
+                        <span>India</span>
+                    </div>
+                </div>
+                <div class="back">
+                    <div class="inner">
+                        <p>Can chat with the popular girls all over the India.</p>
+                        <div class="buttons">
+                                <a  class="btn effect04 paynow" data-val="99" data-sm-link-text="₹99" target="_blank"><span>Pay now</span></a>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- for Second type of subscription method -->
+        <div class="col" ontouchstart="this.classList.toggle('hover');">
+            <div class="container1">
+                <div class="front"
+                    style="background-image: url(https://images.unsplash.com/photo-1495924979005-79104481a52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                    <div class="inner">
+                        <p>Deulex</p>
+                        <span>Celeberity</span>
+                    </div>
+                </div>
+                <div class="back">
+                    <div class="inner">
+                        <p>Can chat with the popular girl Celeberity all over the India.</p>
+                        <div class="buttons">
+                            <a  class="btn effect04 paynow" data-val="399" data-sm-link-text="₹399" target="_blank"><span>Pay now</span></a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- for Second type of subscription method -->
+        <div class="col" ontouchstart="this.classList.toggle('hover');">
+            <div class="container1">
+                <div class="front"
+                    style="background-image: url(https://images.unsplash.com/photo-1593800026718-93dc58b654d0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)">
+                    <div class="inner">
+                        <p>Ultra Deulex</p>
+                        <span>World wide</span>
+                    </div>
+                </div>
+                <div class="back">
+                    <div class="inner">
+                        <p>Can chat with the P*** industries world wide.</p>
+                        <div class="buttons">
+                            <a  class="btn effect04 paynow" data-val="999" data-sm-link-text="₹999" target="_blank"><span>Pay now</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+
+
+
+    <%- include('layouts/footer.ejs'); -%>

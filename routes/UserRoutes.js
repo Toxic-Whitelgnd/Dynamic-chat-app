@@ -13,6 +13,7 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 
 console.log(SESSION_SECRET);
 
+user_route.use('/public/',express.static('./public'));
 user_route.use(session({
     secret: 'mysecretkeyy',
     // resave: true,
@@ -81,6 +82,8 @@ user_route.post('/update-group-chat',userController.updateGroupChat);
 
 // for subscription page
 user_route.get('/subscription',userController.subscription);
+user_route.post('/payment-page',auth.isLogin,userController.paymentPage);
+user_route.post('/update-premium-user',auth.isLogin,userController.updatePremiumUser);
 
 // doesnt match any route it will redirect to login page
 user_route.get('*', function (req, res) {

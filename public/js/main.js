@@ -640,3 +640,103 @@ $('#edit-group-message-form').submit(function(e){
 socket.on('GroupchatUpdatedmsg', (data)=>{
 	$('#'+data.id).find('span').text(data.msg);
 });
+
+
+// for payment gateway
+var orderId;
+var orderAmt;
+$(document).on('click','.paynow',function(){
+	var amt = $(this).attr('data-val');
+	console.log(amt);
+	$.ajax({
+		url:'/payment-page',
+		type:'post',
+		data:{amt:amt},
+		success:function(res){
+			if(res.success == true){
+				console.log(res);
+				orderId = res.order.id;
+				orderAmt = res.order.amount;
+				checkoutPayment();
+			}
+			else{	
+				console.log("y i am not getting");
+			}
+		}
+	})
+});
+
+// create function to start the checkout pages
+
+function checkoutPayment(){
+	console.log("checkout page has been created");
+	console.log(orderId);
+	console.log(orderAmt);
+
+	var options = {
+		"key": "rzp_test_AZ9LyozDGv5aSK", // Enter the Key ID generated from the Dashboard
+		"amount":orderAmt.toString(), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+		"currency": "INR",
+		"name": "Akatsuki Organisation",
+		"description": "in the test mode transaction",
+		"image": "https://w7.pngwing.com/pngs/954/164/png-transparent-akatsuki-logo-thumbnail.png",
+		"order_id":orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+		"handler": function (response){
+			alert(response.razorpay_payment_id);
+			alert(response.razorpay_order_id);
+			alert(response.razorpay_signature)
+			updatePremiumUser(response.razorpay_payment_id,response.razorpay_order_id,response.razorpay_signature);
+		},
+		
+		"theme": {
+			"color": "#3399cc"
+		}
+	};
+	var rzp1 = new Razorpay(options);
+	rzp1.on('payment.failed', function (response){
+			alert(response.error.code);
+			alert(response.error.description);
+			alert(response.error.source);
+			alert(response.error.step);
+			alert(response.error.reason);
+			alert(response.error.metadata.order_id);
+			alert(response.error.metadata.payment_id);
+	});
+
+	rzp1.open();
+
+
+}
+
+// now its time to push into the database based on the premium plans!
+// thre type: S , D ,U
+// compare the payment money and assign it to the variabl and pass it to the db
+function updatePremiumUser(paymentid,orderid,paymentsignature){
+	$.ajax({
+		url:'/update-premium-user',
+		type:'post',
+		data:{userid:sender_id,
+			orderAmt:orderAmt,
+			paymentid:paymentid,
+			orderid:orderid,
+			paymentsignature:paymentsignature},
+		success:function(res){
+			if(res.success){
+				console.log("yo lets fk them");
+				// after that page reload and show the benfits of the page
+				if(res.tag == 'S'){
+					console.log("render a supreme page");
+				}
+				else if(res.tag == 'D'){
+					console.log("render a deulex page");
+				}
+				else{
+					console.log("render a ultra deulex page");
+				}
+			}
+			else{
+				console.log("chec kyo");
+			}
+		}
+	})
+}
