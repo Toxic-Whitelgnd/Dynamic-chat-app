@@ -85,16 +85,24 @@ user_route.get('/subscription',userController.subscription);
 user_route.post('/payment-page',auth.isLogin,userController.paymentPage);
 user_route.post('/update-premium-user',auth.isLogin,userController.updatePremiumUser);
 
-// for supermodel regestration
+// for supermodel supreme get and post request
 user_route.get('/supersregisterload',userController.supersregisterload);
 user_route.post('/supersregister',upload.single('image'),userController.superSregister);
-user_route.post('/save-supreme-chat',userController.saveSchat);
-user_route.post('/delete-supreme-chat',userController.deleteSchat);
-user_route.post('/update-supreme-chat',userController.updateSchat);
 user_route.get('/supersloginload',userController.supersloginload);
 user_route.post('/superslogin',userController.superSLogin);
 user_route.get('/supersdash',userController.supresdash);
 user_route.get('/logouts', auth.isLogin,userController.superslogout);
+user_route.get('/dashboard-s',userController.dashboardS);
+user_route.get('/superShome',userController.superShome);
+user_route.post('/save-supreme-chat',userController.saveSchat);
+user_route.post('/delete-supreme-chat',userController.deleteSchat);
+user_route.post('/update-supreme-chat',userController.updateSchat);
+
+// yass working for getting the supreme page
+user_route.get('/get-supreme',userController.getSupreme);
+
+
+
 // doesnt match any route it will redirect to login page
 user_route.get('*', function (req, res) {
     res.redirect('/');

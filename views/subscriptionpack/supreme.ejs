@@ -1,14 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supreme OnlyFans</title>
-    <link rel="stylesheet" href="/public/css/subcription.css">
-</head>
-
-<body>
+<%- include('../layouts/header.ejs'); -%>
+    
     <h1>Welcome to Supreme FanGirl Pages</h1>
 
     <div class="row sup">
@@ -21,15 +12,96 @@
             <p>Change of increase your Love</p>
         </div>
         <div class="col-md-4">
-    
+
             <img src="https://images.unsplash.com/photo-1429277005502-eed8e872fe52?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-            alt="hornygirl" style="height: 200px;width: 400px;"
-            />
+                alt="hornygirl" style="height: 200px;width: 400px;" />
         </div>
         <div>
             <h1>Start Chatiing now!!</h1>
             <!-- TODO:NOW I NEED TO MAKE SUPERMODALS -->
-            
+            <div class="row">
+
+                <div class="col-md-3">
+                    <ul class="list-group">
+                        <% if(Susers.length> 0){
+                            for(let i=0;i<Susers.length;i++){ %>
+                                <li class="list-group-item list-group-item-dark cursor-pointer user-list-s"
+                                    data-id="<%=Susers[i]['_id'] %>">
+                                    <img src="<%= 'http://localhost:9999/'+Susers[i]['image'] %>" alt="userpic"
+                                        width="50" height="50">
+                                    <%= Susers[i]['name'] %>
+                                        <% if(Susers[i]['is_online']==1){ %>
+                                            <sub class="online-status" id="<%= Susers[i]['_id'] %>-status">online</sub>
+                                            <% }else{ %>
+                                                <sub class="offline-status"
+                                                    id="<%= Susers[i]['_id'] %>-status">offline</sub>
+                                                <% } %>
+                                </li>
+                                <% } } %>
+                    </ul>
+                </div>
+
+                <div class="col-md-9">
+                    <h3 class="start-head-s"> Click to Start the Chat </h3>
+                    <div class="chat-section-s">
+                        <div id="chat-container-s">
+
+                        </div>
+                        <form action="" id="chat-form-s">
+                            <input type="text" name="message" placeholder="Enter Message" id="message-s" class="border"
+                                required>
+                            <input type="submit" value="Send Message" class="btn btn-primary">
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="deletemessageChat-s" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="" id="delete-message-form-s">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" id="delete-message-id-s">
+                                <p>Are you sure you want to delete the message?</p>
+                                <p id="delete-message-s"> <b></b></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="updatemessageChat-s" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Update message</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="edit-message-form-s">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" id="edit-message-id-s">
+                                <input type="text" name="message" id="update-message-id-s">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
             <!-- END OF THE CHAT -->
         </div>
@@ -37,10 +109,7 @@
 
     </div>
 
+ <%- include('../layouts/footer.ejs'); -%>
 
 
-    <!-- NEED TO MAKE  A CHAT WITH SUPREME USER MODAL -->
 
-</body>
-
-</html>

@@ -726,7 +726,7 @@ function updatePremiumUser(paymentid,orderid,paymentsignature){
 				// after that page reload and show the benfits of the page
 				if(res.tag == 'S'){
 					console.log("render a supreme page");
-					window.location.replace('/subscription');
+					window.location.replace('/get-supreme')
 					
 				}
 				else if(res.tag == 'D'){
@@ -825,6 +825,7 @@ $('#chat-form-s').submit(function (e) {
 })
 
 socket.on('loadnewSChat', function (data) {
+	console.log("came to load new s chat probmlem might be her");
 	if (sender_id == data.reciver_id && reciver_id == data.sender_id) {
 		let html = `<div class="another-user" id='` + data._id + `'>
                             <h5><span>`+ data.message + `</span>

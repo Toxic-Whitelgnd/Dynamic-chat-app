@@ -8,6 +8,7 @@ const useroute = require("./routes/UserRoutes");
 const io = require('socket.io')(http);
 const User = require("./models/UserModel");
 const Chat = require("./models/ChatModel");
+const SChat = require("./models/SupremeChatModel");
 
 var userver = io.of('/user-server');
 
@@ -80,8 +81,8 @@ userver.on('connection',async function(socket){
 
     // loading the exist chat
     socket.on('loadExistSChat',async (data)=>{
-        
-        var chats = await Chat.find({
+        console.log("came to s load exit chat");
+        var chats = await SChat.find({
             $or:[
                 {sender_id:data.sender_id,reciver_id:data.reciver_id},
                 {sender_id:data.reciver_id,reciver_id:data.sender_id},

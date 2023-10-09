@@ -548,7 +548,7 @@ const updatePremiumUser = async function(req,res){
 // supermodel creation goes here
 const supersregisterload = async (req,res) => {
     try {
-        res.render('superSupreme')
+        res.render('SupremePack/superSupreme')
     } catch (error) {
         console.log(error);
     }
@@ -568,7 +568,7 @@ const superSregister = async (req,res) => {
 
         await SuperSUser.insertMany([newuser]).then((docs) => {
             console.log(docs);
-            res.render('superSupremelogin', { message: 'Regstration succesefull' })
+            res.render('SupremePack/superSupremelogin', { message: 'Regstration succesefull' })
         })
             .catch((err) => {
                 console.log(err);
@@ -581,7 +581,7 @@ const superSregister = async (req,res) => {
 }
 const supersloginload = async (req,res) => {
     try {
-        res.render('superSupremelogin')
+        res.render('SupremePack/superSupremelogin')
     } catch (error) {
         console.log(error);
     }
@@ -595,7 +595,7 @@ const superSLogin = async (req, res) => {
        
         const userData = await SuperSUser.findOne({ email: email }); // Now it contains email,password,image,username
         
-        // TODO: GET ALL THE USER WHO ARE IN IS_SUPREME_USER AND SEND THERE AND THERE WE WILL IMPLEMENT THE CAHT
+        
         var users = await User.find({ is_supreme_user : '1'})
 
         console.log("gotted for supreme pay user");
@@ -610,7 +610,7 @@ const superSLogin = async (req, res) => {
                 res.cookie('user', JSON.stringify(userData));
                 console.log(req.session.user);
                 // res.render('superSupremeDash',{ cuser: req.session.user , users:users});
-                res.redirect('/supersdash');
+                res.redirect('/superSHome');
             }
             else {
                 res.render('login', { message: 'Wrong Password' });
@@ -628,11 +628,28 @@ const superSLogin = async (req, res) => {
 const supresdash = async (req, res) => {
     try {
         var users = await User.find({ is_supreme_user : '1'})
-        res.render('superSupremeDash',{cuser:req.session.user,users:users});
+        res.render('SupremePack/superSupremeDash',{cuser:req.session.user,users:users});
     } catch (error) {
         
     }
 }
+const superShome = async (req, res) => {
+    try {
+        var users = await User.find({ is_supreme_user : '1'})
+        res.render('SupremePack/superSupremeHome',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
+// dashboard of supreme goes here
+const dashboardS = async (req, res) => {
+    try {
+        var users = await User.find({ is_supreme_user : '1'})
+        res.render('SupremePack/superSupremeDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
 // logout of supermodel
 const superslogout = async (req, res) => {
     try {
@@ -691,6 +708,17 @@ const updateSchat = async (req, res) => {
     }
 };
 
+// for testing purpose
+const getSupreme = async (req, res) => {
+    try {
+        var Susers = await SuperSUser.find({ _id: { $nin: req.session.user } })
+
+        res.render('subscriptionpack/supreme',{user:req.session.user,Susers:Susers});
+    } catch (error) {
+        
+    }
+};
+
 // exporting the modules
 module.exports = {
     register,
@@ -723,8 +751,11 @@ module.exports = {
     superSLogin,
     supersloginload,
     supresdash,
+    superShome,
+    dashboardS,
     superslogout,
     saveSchat,
     deleteSchat,
     updateSchat,
+    getSupreme,
 }
