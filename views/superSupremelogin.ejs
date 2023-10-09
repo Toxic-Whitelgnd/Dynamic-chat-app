@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/mystyle.css" media="screen">
+</head>
+<body>
+    
+<div class="login-box">
+        <h2>Super Supreme Login Form</h2>
+        <form action="/superslogin" method="post">
+            <div class="user-box">
+                <input type="email" name="email" placeholder="palyboi99@gmail.com">
+                <label>Email</label>
+            </div>
+            <div class="user-box">
+                <input type="password" name="password" placeholder="***********">
+                <label>Password</label>
+            </div>
+            <a type="submit">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <input type="submit" value="L O G I N" id="subbtn">
+            </a>
+            <a href="/register">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+               Register?
+            </a>
+        </form>
+
+        <% if(typeof message !=='undefined' ){ %> 
+            <p style="color:red;">
+                <%= message %>
+            </p>
+            <% } %>
+</body>
+</html>
+
+
+

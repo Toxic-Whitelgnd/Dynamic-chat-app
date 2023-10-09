@@ -726,12 +726,16 @@ function updatePremiumUser(paymentid,orderid,paymentsignature){
 				// after that page reload and show the benfits of the page
 				if(res.tag == 'S'){
 					console.log("render a supreme page");
+					window.location.replace('/subscription');
+					
 				}
 				else if(res.tag == 'D'){
 					console.log("render a deulex page");
+					window.location.replace('/subscription');
 				}
 				else{
 					console.log("render a ultra deulex page");
+					window.location.replace('/subscription');
 				}
 			}
 			else{
@@ -740,3 +744,186 @@ function updatePremiumUser(paymentid,orderid,paymentsignature){
 		}
 	})
 }
+// for supermodal supreme chat
+$(document).ready(function () {
+	$('.user-list-s').click(function () {
+		reciver_id = $(this).attr('data-id');
+		$('.start-head-s').hide();
+		$('.chat-section-s').show();
+
+		// firing the event in the socket enviroment so we can get the evnt any where in the program
+		socket.emit('loadExistSChat', { sender_id: sender_id, reciver_id: reciver_id });
+	})
+
+
+})
+// getting the loaded chats
+socket.on('GetExistSChat', function (data) {
+	$('#chat-container-s').html('');
+	let htmls = '';
+	var chats = data.chats;
+	for (let i = 0; i < chats.length; i++) {
+		let addClass = ''
+		if (chats[i]['sender_id'] == sender_id) {
+			addClass = 'current-user';
+		}
+		else {
+			addClass = 'another-user';
+		}
+		htmls += `<div class='` + addClass + `' id='` + chats[i]['_id'] + `'>
+                            <h5><span>`+ chats[i]['message'] + `</span>`;
+		if (chats[i]['sender_id'] == sender_id) {
+			htmls += `
+                    <i class="fa fa-trash st"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-bs-target="#deletemessageChat-s" ></i> 
+                    <i class="fa fa-edit se"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-msg='` + chats[i]['message'] + `' data-bs-target="#updatemessageChat-s" ></i>
+                    `;
+		}
+
+		htmls += `</h5>
+                            </div>`;
+	}
+	$('#chat-container-s').append(htmls);
+	scrollToBottomS();
+});
+
+// SAVING TO THE SERVER
+$('#chat-form-s').submit(function (e) {
+	e.preventDefault();
+	var message = $('#message-s').val();
+	console.log("fkk off");
+
+	$.ajax({
+		url: '/save-supreme-chat',
+		method: 'POST',
+		data: {
+			sender_id: sender_id,
+			reciver_id: reciver_id,
+			message: message
+		},
+		success: function (res) {
+			if (res.success) {
+				$('#message').val('');
+				var chat = res.data.message;
+				let html = `<div class="current-user" id='` + res.data._id + `'>
+                            <h5><span>`+ chat + `</span>
+                                <i class="fa fa-trash st"  data-bs-toggle="modal" data-id='`+ res.data._id + `' data-bs-target="#deletemessageChat-s" ></i>
+                                <i class="fa fa-edit se"  data-bs-toggle="modal" data-id='`+ res.data._id + `' data-msg='` + res.data.message + `' data-bs-target="#updatemessageChat-s" ></i>  
+                            </h5>
+                            </div>`;
+
+				$('#chat-container-s').append(html);
+				// broadcasting the new msg
+				socket.emit('newSChat', res.data);
+				scrollToBottom();
+			}
+			else {
+				alert('Failed');
+			}
+		}
+	});
+
+})
+
+socket.on('loadnewSChat', function (data) {
+	if (sender_id == data.reciver_id && reciver_id == data.sender_id) {
+		let html = `<div class="another-user" id='` + data._id + `'>
+                            <h5><span>`+ data.message + `</span>
+                                <i class="fa fa-trash st"  data-bs-toggle="modal" data-id='`+ data._id + `' data-bs-target="#deletemessageChat-s" ></i>
+
+                                </h5>
+                            </div>`;
+
+		$('#chat-container').append(html);
+	}
+	scrollToBottomS();
+})
+
+// scrolling function
+function scrollToBottomS() {
+	$('#chat-container-s').animate(
+		{
+			scrollTop: $('#chat-container-s').offset().top + $('#chat-container-s')[0].scrollHeight
+		}, 0
+	)
+};
+
+// deleting the msg 
+$(document).on('click', '.st', function (e) {
+
+	let msg = $(this).parent().text();
+	$('#delete-message-s').text(msg);
+
+	$('#delete-message-id-s').val($(this).attr('data-id'));
+
+})
+
+// sending the deleting id to the server
+$('#delete-message-form-s').submit(function (e) {
+	e.preventDefault();
+
+	var id = $('#delete-message-id-s').val();
+
+	$.ajax({
+		url: '/delete-supreme-chat',
+		type: 'POST',
+		data: { id: id },
+		success: function (res) {
+			if (res.success == true) {
+				$('#' + id).remove();
+				// for closing the modal
+				$('#deletemessageChat-s').modal('hide');
+
+				// need to know the other user so broadcast
+				socket.emit('SchatDeleted', id);
+			}
+			else {
+				alert(res.message);
+			}
+		}
+	})
+
+});
+
+socket.on('SchatmessageDeleted', (id) => {
+	$('#' + id).remove();
+})
+
+// updating the message
+$(document).on('click', '.se', function () {
+	$('#edit-message-id-s').val($(this).attr('data-id'));
+	$('#update-message-id-s').val($(this).attr('data-msg'));
+	console.log("here in click faedit");
+})
+
+// sending the updating id to the server
+$('#edit-message-form-s').submit(function (e) {
+	e.preventDefault();
+
+	var id = $('#edit-message-id-s').val();
+	var msg = $('#update-message-id-s').val();
+
+	$.ajax({
+		url: '/update-supreme-chat',
+		type: 'POST',
+		data: { id: id, message: msg },
+		success: function (res) {
+			if (res.success == true) {
+
+				// for closing the modal
+				$('#updatemessageChat-s').modal('hide');
+				$('#' + id).find('span').text(msg);
+				$('#' + id).find('.fa-edit').attr('data-msg', msg);
+				// need to know the other user so broadcast
+				socket.emit('SchatUpdated', { id: id, message: msg });
+			}
+			else {
+				alert(res.message);
+			}
+		}
+	})
+
+});
+
+socket.on('SchatmessageUpdated', (data) => {
+	$('#' + data.id).find('span').text(data.message);
+})

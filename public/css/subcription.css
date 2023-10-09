@@ -1,0 +1,14 @@
+.sup{
+    margin-top: 20px;
+}
+.supb{
+    margin-top: 50px;
+}
+
+.supb p{
+    /* text-align: left; */
+    color: #444;
+    letter-spacing: 0.05em;
+    margin: 0 0 0.4em;
+    font-size: 1em;
+  }

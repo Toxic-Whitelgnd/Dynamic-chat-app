@@ -71,6 +71,37 @@ userver.on('connection',async function(socket){
     socket.on('GroupchatUpdated',(data)=>{
         socket.broadcast.emit('GroupchatUpdatedmsg',data);
     });
+
+    // for supermodal supreme
+    // starting here
+    socket.on('newSChat',(data)=>{
+        socket.broadcast.emit('loadnewSChat',data);
+    })
+
+    // loading the exist chat
+    socket.on('loadExistSChat',async (data)=>{
+        
+        var chats = await Chat.find({
+            $or:[
+                {sender_id:data.sender_id,reciver_id:data.reciver_id},
+                {sender_id:data.reciver_id,reciver_id:data.sender_id},
+            ]
+        })
+      
+        // firing the exit caht after getting
+        socket.emit('GetExistSChat',{chats:chats});
+    });
+
+    // for deleting message
+    socket.on('SchatDeleted',(id)=>{
+        socket.broadcast.emit('SchatmessageDeleted',id);
+    });
+    // for updating the message
+    socket.on('SchatUpdated',(data)=>{
+        socket.broadcast.emit('SchatmessageUpdated',data);
+    });
+
+    // ending here
 });
 
 app.use('/',useroute);

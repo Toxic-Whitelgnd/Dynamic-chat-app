@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 const Razorpay = require('razorpay');
 const { response } = require("../routes/UserRoutes");
 require('dotenv').config();
+const SuperSUser = require('../models/SuperSupModel');
+const SChat = require('../models/SupremeChatModel');
 
 const registerLoad = async (req, res) => {
     try {
@@ -55,8 +57,10 @@ const login = async (req, res) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
-
+        
+       
         const userData = await User.findOne({ email: email }); // Now it contains email,password,image,username
+        
         if (userData) {
             const passwordMatch = await bcrypt.compare(password, userData.password);
             console.log(passwordMatch);
@@ -84,7 +88,7 @@ const login = async (req, res) => {
 
 const loadDashboard = async (req, res) => {
     try {
-        var users = await User.find({ _id: { $nin: [req.session.user._id] } })
+        var users = await User.find({ _id: { $nin: req.session.user } })
         res.render('dashboard', { user: req.session.user, users: users });
 
 
@@ -448,10 +452,14 @@ const updateGroupChat = async (req, res) => {
     }
 };
 // for subscription page
-const subscription = (req, res) => {
+const subscription = async (req, res) => {
     try {
-        res.render('subscription')
+
+        var Susers = await SuperSUser.find({ _id: { $nin: req.session.user } })
+
+        res.render('subscription',{user:req.session.user,Susers:Susers})
     } catch (error) {
+
 
     }
 };
@@ -537,6 +545,153 @@ const updatePremiumUser = async function(req,res){
     }
 }
 
+// supermodel creation goes here
+const supersregisterload = async (req,res) => {
+    try {
+        res.render('superSupreme')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const superSregister = async (req,res) => {
+    try {
+        const passwordHash = await bcrypt.hash(req.body.password, 10);
+
+        const newuser = new SuperSUser({
+            name: req.body.name,
+            password: passwordHash,
+            email: req.body.email,
+            image: 'images/' + req.file.filename,
+
+        })
+
+
+        await SuperSUser.insertMany([newuser]).then((docs) => {
+            console.log(docs);
+            res.render('superSupremelogin', { message: 'Regstration succesefull' })
+        })
+            .catch((err) => {
+                console.log(err);
+            });
+
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const supersloginload = async (req,res) => {
+    try {
+        res.render('superSupremelogin')
+    } catch (error) {
+        console.log(error);
+    }
+}
+// login of the supermodel
+const superSLogin = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        
+       
+        const userData = await SuperSUser.findOne({ email: email }); // Now it contains email,password,image,username
+        
+        // TODO: GET ALL THE USER WHO ARE IN IS_SUPREME_USER AND SEND THERE AND THERE WE WILL IMPLEMENT THE CAHT
+        var users = await User.find({ is_supreme_user : '1'})
+
+        console.log("gotted for supreme pay user");
+        console.log(users);
+        console.log("end for supreme pay user");
+
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(password, userData.password);
+            console.log(passwordMatch);
+            if (passwordMatch) {
+                req.session.user = userData;
+                res.cookie('user', JSON.stringify(userData));
+                console.log(req.session.user);
+                // res.render('superSupremeDash',{ cuser: req.session.user , users:users});
+                res.redirect('/supersdash');
+            }
+            else {
+                res.render('login', { message: 'Wrong Password' });
+            }
+
+        }
+        else {
+            res.render('login', { message: 'Wrong credentials' });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const supresdash = async (req, res) => {
+    try {
+        var users = await User.find({ is_supreme_user : '1'})
+        res.render('superSupremeDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+}
+// logout of supermodel
+const superslogout = async (req, res) => {
+    try {
+        res.clearCookie('user');
+        req.session.destroy();
+        res.redirect('/supersloginload');
+    } catch (error) {
+        console.log(error);
+    }
+}
+// this is for getting msg from frontend (to store in db) and sending response to frontend
+const saveSchat = async (req, res) => {
+    try {
+
+        var chat = new SChat(
+            {
+                sender_id: req.body.sender_id,
+                reciver_id: req.body.reciver_id,
+                message: req.body.message,
+            }
+        );
+
+        var newChat = await chat.save();
+
+        res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+}
+
+// for deleting the supermodal chat
+const deleteSchat = async (req, res) => {
+    try {
+
+        await SChat.deleteOne({ _id: req.body.id });
+
+        res.status(200).send({ success: true });
+
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+// for updating the supermodal chat
+const updateSchat = async (req, res) => {
+    try {
+
+        SChat.findByIdAndUpdate({ _id: req.body.id }, {
+            $set: {
+                message: req.body.message,
+            }
+        });
+
+        res.status(200).send({ success: true });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+
+// exporting the modules
 module.exports = {
     register,
     registerLoad,
@@ -563,4 +718,13 @@ module.exports = {
     subscription,
     paymentPage,
     updatePremiumUser,
+    superSregister,
+    supersregisterload,
+    superSLogin,
+    supersloginload,
+    supresdash,
+    superslogout,
+    saveSchat,
+    deleteSchat,
+    updateSchat,
 }

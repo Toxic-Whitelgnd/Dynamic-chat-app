@@ -1,76 +1,186 @@
 <%- include('layouts/header.ejs'); -%>
-    <h1>Subscribe to get a FanGirl chats</h1>
+
 
     <!-- TODO:NEED TO RENDER THE PAGE WITH THE TYPE OF PLAN SELECTED NEED  TO BE DONE TONIGHT -->
 
-    <div class="colss">
-        <!-- for first type of subscription method -->
-        <div class="col" ontouchstart="this.classList.toggle('hover');">
-            <div class="container1">
-                <div class="front"
-                    style="background-image: url(https://images.unsplash.com/photo-1503104834685-7205e8607eb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
-                    <div class="inner">
-                        <p>Supreme</p>
-                        <span>India</span>
-                    </div>
-                </div>
-                <div class="back">
-                    <div class="inner">
-                        <p>Can chat with the popular girls all over the India.</p>
-                        <div class="buttons">
-                                <a  class="btn effect04 paynow" data-val="99" data-sm-link-text="₹99" target="_blank"><span>Pay now</span></a>
-                          </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <% if(user.is_supreme_user==0 && user.is_deulex_user==0 && user.is_ultra_deulex_user==0){ %>
+        <div>
+            <h1>Subscribe to get a FanGirl chats</h1>
+            <div class="colss">
 
-        <!-- for Second type of subscription method -->
-        <div class="col" ontouchstart="this.classList.toggle('hover');">
-            <div class="container1">
-                <div class="front"
-                    style="background-image: url(https://images.unsplash.com/photo-1495924979005-79104481a52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
-                    <div class="inner">
-                        <p>Deulex</p>
-                        <span>Celeberity</span>
-                    </div>
-                </div>
-                <div class="back">
-                    <div class="inner">
-                        <p>Can chat with the popular girl Celeberity all over the India.</p>
-                        <div class="buttons">
-                            <a  class="btn effect04 paynow" data-val="399" data-sm-link-text="₹399" target="_blank"><span>Pay now</span></a>
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- for Second type of subscription method -->
-        <div class="col" ontouchstart="this.classList.toggle('hover');">
-            <div class="container1">
-                <div class="front"
-                    style="background-image: url(https://images.unsplash.com/photo-1593800026718-93dc58b654d0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)">
-                    <div class="inner">
-                        <p>Ultra Deulex</p>
-                        <span>World wide</span>
-                    </div>
-                </div>
-                <div class="back">
-                    <div class="inner">
-                        <p>Can chat with the P*** industries world wide.</p>
-                        <div class="buttons">
-                            <a  class="btn effect04 paynow" data-val="999" data-sm-link-text="₹999" target="_blank"><span>Pay now</span></a>
+                <div class="col" ontouchstart="this.classList.toggle('hover');">
+                    <div class="container1">
+                        <div class="front"
+                            style="background-image: url(https://images.unsplash.com/photo-1503104834685-7205e8607eb9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                            <div class="inner">
+                                <p>Supreme</p>
+                                <span>India</span>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="inner">
+                                <p>Can chat with the popular girls all over the India.</p>
+                                <div class="buttons">
+                                    <a class="btn effect04 paynow" data-val="99" data-sm-link-text="₹99"
+                                        target="_blank"><span>Pay now</span></a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="col" ontouchstart="this.classList.toggle('hover');">
+                    <div class="container1">
+                        <div class="front"
+                            style="background-image: url(https://images.unsplash.com/photo-1495924979005-79104481a52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                            <div class="inner">
+                                <p>Deulex</p>
+                                <span>Celeberity</span>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="inner">
+                                <p>Can chat with the popular girl Celeberity all over the India.</p>
+                                <div class="buttons">
+                                    <a class="btn effect04 paynow" data-val="399" data-sm-link-text="₹399"
+                                        target="_blank"><span>Pay now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col" ontouchstart="this.classList.toggle('hover');">
+                    <div class="container1">
+                        <div class="front"
+                            style="background-image: url(https://images.unsplash.com/photo-1593800026718-93dc58b654d0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)">
+                            <div class="inner">
+                                <p>Ultra Deulex</p>
+                                <span>World wide</span>
+                            </div>
+                        </div>
+                        <div class="back">
+                            <div class="inner">
+                                <p>Can chat with the P*** industries world wide.</p>
+                                <div class="buttons">
+                                    <a class="btn effect04 paynow" data-val="999" data-sm-link-text="₹999"
+                                        target="_blank"><span>Pay now</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
+        <% } else if(user.is_supreme_user==1){ %>
+            <div>
+                <%- include('subscriptionpack/supreme.ejs'); -%>
 
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <ul class="list-group">
+                            <% if(Susers.length> 0){
+                                for(let i=0;i<Susers.length;i++){ %>
+                                    <li class="list-group-item list-group-item-dark cursor-pointer user-list-s"
+                                        data-id="<%=Susers[i]['_id'] %>">
+                                        <img src="<%= 'http://localhost:9999/'+Susers[i]['image'] %>" alt="userpic" width="50"
+                                            height="50">
+                                        <%= Susers[i]['name'] %>
+                                            <% if(Susers[i]['is_online']==1){ %>
+                                                <sub class="online-status" id="<%= Susers[i]['_id'] %>-status">online</sub>
+                                                <% }else{ %>
+                                                    <sub class="offline-status" id="<%= Susers[i]['_id'] %>-status">offline</sub>
+                                                    <% } %>
+                                    </li>
+                                    <% } } %>
+                        </ul>
+                    </div>
+            
+                    <div class="col-md-9">
+                        <h3 class="start-head-s"> Click to Start the Chat </h3>
+                        <div class="chat-section-s">
+                            <div id="chat-container-s">
+            
+                            </div>
+                            <form action="" id="chat-form-s">
+                                <input type="text" name="message" placeholder="Enter Message" id="message-s"  class="border"
+                                    required>
+                                <input type="submit" value="Send Message" class="btn btn-primary">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deletemessageChat-s" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="delete-message-form-s">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="delete-message-id-s">
+                        <p>Are you sure you want to delete the message?</p>
+                        <p id="delete-message-s"> <b></b></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    
+
+    <div class="modal fade" id="updatemessageChat-s" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="edit-message-form-s">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit-message-id-s">
+                        <input type="text" name="message" id="update-message-id-s">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+            </div>
+        <% } else if(user.is_deulex_user==1){ %>
+                <div>
+                    <%- include('subscriptionpack/deulex.ejs'); -%>
+                    
+                </div>
+                // TODO:TRY TO PUT IN VIEWS AND MAKE A GET REQUEST AND SEE THE RESULT
+        <% } else if(user.is_ultra_deulex_user==1){ %>
+                    <div>
+                        <p>Welcome to Ultra Deulex user</p>
+                    </div>
+        <% }%>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
 
-    <%- include('layouts/footer.ejs'); -%>
+
+ <%- include('layouts/footer.ejs'); -%>
+
+                            <!-- TODO: AFTER MAKING IF THE USER WANT TO UPGRADE THE PLAN THEN CREATE A NER FILE AND MAKE A CONDITION 
+            USER IS NOT IN THE PLAN
+-->

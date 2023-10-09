@@ -12078,3 +12078,14 @@ a{
   border-radius: 100px;
   border: 1px solid blue;
 }
+
+/* for supermodel suprme */
+#chat-container-s {
+  background-color: lightblue;
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+}
+.chat-section-s{
+  display: none;
+}

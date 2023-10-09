@@ -395,16 +395,6 @@
 /*   padding: 2em 0em; */
 }
 
-h1 {
-  text-align: left;
-  color: #444;
-  letter-spacing: 0.05em;
-  margin: 0 0 0.4em;
-  font-size: 1em;
-}
-
-
-
 .btn {
   letter-spacing: 0.1em;
   cursor: pointer;
