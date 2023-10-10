@@ -9,6 +9,7 @@ const io = require('socket.io')(http);
 const User = require("./models/UserModel");
 const Chat = require("./models/ChatModel");
 const SChat = require("./models/SupremeChatModel");
+const DChat = require("./models/DeulexModel/DeulexChatModel");
 
 var userver = io.of('/user-server');
 
@@ -100,6 +101,37 @@ userver.on('connection',async function(socket){
     // for updating the message
     socket.on('SchatUpdated',(data)=>{
         socket.broadcast.emit('SchatmessageUpdated',data);
+    });
+
+    // ending here
+
+    // for supermodal DEULEX
+    // starting here
+    socket.on('newDChat',(data)=>{
+        socket.broadcast.emit('loadnewDChat',data);
+    })
+
+    // loading the exist chat
+    socket.on('loadExistDChat',async (data)=>{
+        console.log("came to s load exit chat");
+        var chats = await DChat.find({
+            $or:[
+                {sender_id:data.sender_id,reciver_id:data.reciver_id},
+                {sender_id:data.reciver_id,reciver_id:data.sender_id},
+            ]
+        })
+      
+        // firing the exit caht after getting
+        socket.emit('GetExistDChat',{chats:chats});
+    });
+
+    // for deleting message
+    socket.on('DchatDeleted',(id)=>{
+        socket.broadcast.emit('DchatmessageDeleted',id);
+    });
+    // for updating the message
+    socket.on('DchatUpdated',(data)=>{
+        socket.broadcast.emit('DchatmessageUpdated',data);
     });
 
     // ending here

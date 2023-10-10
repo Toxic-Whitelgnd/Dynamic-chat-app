@@ -1,0 +1,91 @@
+<%- include('../layout-super-d/header-d.ejs'); -%>
+    <h1> Welcome !!</h1>
+    <h4>Hello Mrs.<%= cuser.name %>
+    </h4>
+
+    
+    <div class="row">
+
+        <div class="col-md-3">
+            <ul class="list-group">
+                <% if(users.length> 0){
+                    for(let i=0;i<users.length;i++){ %>
+                        <li class="list-group-item list-group-item-dark cursor-pointer user-list-d"
+                            data-id="<%=users[i]['_id'] %>">
+                            <img src="<%= 'http://localhost:9999/'+users[i]['image'] %>" alt="userpic" width="50"
+                                height="50">
+                            <%= users[i]['name'] %>
+                                <% if(users[i]['is_online']==1){ %>
+                                    <sub class="online-status" id="<%= users[i]['_id'] %>-status">online</sub>
+                                    <% }else{ %>
+                                        <sub class="offline-status" id="<%= users[i]['_id'] %>-status">offline</sub>
+                                        <% } %>
+                        </li>
+                        <% } } %>
+            </ul>
+        </div>
+
+        <div class="col-md-9">
+                        <h3 class="start-head-d"> Click to Start the Chat </h3>
+                        <div class="chat-section-d">
+                            <div id="chat-container-d">
+            
+                            </div>
+                            <form action="" id="chat-form-d">
+                                <input type="text" name="message" placeholder="Enter Message" id="message-d"  class="border"
+                                    required>
+                                <input type="submit" value="Send Message" class="btn btn-primary">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="deletemessageChat-d" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="delete-message-form-d">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="delete-message-id-d">
+                        <p>Are you sure you want to delete the message?</p>
+                        <p id="delete-message-d"> <b></b></p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updatemessageChat-d" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  id="edit-message-form-d">
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit-message-id-d">
+                        <input type="text" name="message" id="update-message-id-d">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+
+
+
+
+    <%- include('../layout-super-d/footer-d.ejs'); -%>

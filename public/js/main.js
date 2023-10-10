@@ -731,7 +731,7 @@ function updatePremiumUser(paymentid,orderid,paymentsignature){
 				}
 				else if(res.tag == 'D'){
 					console.log("render a deulex page");
-					window.location.replace('/subscription');
+					window.location.replace('/get-deulex');
 				}
 				else{
 					console.log("render a ultra deulex page");
@@ -744,6 +744,8 @@ function updatePremiumUser(paymentid,orderid,paymentsignature){
 		}
 	})
 }
+
+// --------------------------------- BEGIN OF SUPREME MODEL --------------------------------
 // for supermodal supreme chat
 $(document).ready(function () {
 	$('.user-list-s').click(function () {
@@ -928,3 +930,195 @@ $('#edit-message-form-s').submit(function (e) {
 socket.on('SchatmessageUpdated', (data) => {
 	$('#' + data.id).find('span').text(data.message);
 })
+
+// ------------------------ END OF SUPREME MODEL -------------------------------------------
+
+
+
+// --------------------------------- BEGIN OF DEULEX MODEL --------------------------------
+// for supermodal supreme chat
+$(document).ready(function () {
+	$('.user-list-d').click(function () {
+		reciver_id = $(this).attr('data-id');
+		$('.start-head-d').hide();
+		$('.chat-section-d').show();
+
+		// firing the event in the socket enviroment so we can get the evnt any where in the program
+		socket.emit('loadExistDChat', { sender_id: sender_id, reciver_id: reciver_id });
+	})
+
+
+})
+// getting the loaded chats
+socket.on('GetExistDChat', function (data) {
+	$('#chat-container-d').html('');
+	let htmls = '';
+	var chats = data.chats;
+	for (let i = 0; i < chats.length; i++) {
+		let addClass = ''
+		if (chats[i]['sender_id'] == sender_id) {
+			addClass = 'current-user';
+		}
+		else {
+			addClass = 'another-user';
+		}
+		htmls += `<div class='` + addClass + `' id='` + chats[i]['_id'] + `'>
+                            <h5><span>`+ chats[i]['message'] + `</span>`;
+		if (chats[i]['sender_id'] == sender_id) {
+			htmls += `
+                    <i class="fa fa-trash dt"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-bs-target="#deletemessageChat-d" ></i> 
+                    <i class="fa fa-edit de"  data-bs-toggle="modal" data-id='`+ chats[i]['_id'] + `' data-msg='` + chats[i]['message'] + `' data-bs-target="#updatemessageChat-d" ></i>
+                    `;
+		}
+
+		htmls += `</h5>
+                            </div>`;
+	}
+	$('#chat-container-d').append(htmls);
+	scrollToBottomS();
+});
+
+// SAVING TO THE SERVER
+$('#chat-form-d').submit(function (e) {
+	e.preventDefault();
+	var message = $('#message-d').val();
+	console.log("fkk off");
+
+	$.ajax({
+		url: '/save-deulex-chat',
+		method: 'POST',
+		data: {
+			sender_id: sender_id,
+			reciver_id: reciver_id,
+			message: message
+		},
+		success: function (res) {
+			if (res.success) {
+				$('#message-d').val('');
+				var chat = res.data.message;
+				let html = `<div class="current-user" id='` + res.data._id + `'>
+                            <h5><span>`+ chat + `</span>
+                                <i class="fa fa-trash dt"  data-bs-toggle="modal" data-id='`+ res.data._id + `' data-bs-target="#deletemessageChat-d" ></i>
+                                <i class="fa fa-edit de"  data-bs-toggle="modal" data-id='`+ res.data._id + `' data-msg='` + res.data.message + `' data-bs-target="#updatemessageChat-d" ></i>  
+                            </h5>
+                            </div>`;
+
+				$('#chat-container-d').append(html);
+				// broadcasting the new msg
+				socket.emit('newDChat', res.data);
+				scrollToBottom();
+			}
+			else {
+				alert('Failed');
+			}
+		}
+	});
+
+})
+
+socket.on('loadnewDChat', function (data) {
+	console.log("came to load new s chat probmlem might be her");
+	if (sender_id == data.reciver_id && reciver_id == data.sender_id) {
+		let html = `<div class="another-user" id='` + data._id + `'>
+                            <h5><span>`+ data.message + `</span>
+                                <i class="fa fa-trash dt"  data-bs-toggle="modal" data-id='`+ data._id + `' data-bs-target="#deletemessageChat-s" ></i>
+
+                                </h5>
+                            </div>`;
+
+		$('#chat-container-d').append(html);
+	}
+	scrollToBottomS();
+})
+
+// scrolling function
+function scrollToBottomS() {
+	$('#chat-container-d').animate(
+		{
+			scrollTop: $('#chat-container-d').offset().top + $('#chat-container-d')[0].scrollHeight
+		}, 0
+	)
+};
+
+// deleting the msg 
+$(document).on('click', '.dt', function (e) {
+
+	let msg = $(this).parent().text();
+	$('#delete-message-d').text(msg);
+
+	$('#delete-message-id-d').val($(this).attr('data-id'));
+
+})
+
+// sending the deleting id to the server
+$('#delete-message-form-d').submit(function (e) {
+	e.preventDefault();
+
+	var id = $('#delete-message-id-d').val();
+
+	$.ajax({
+		url: '/delete-deulex-chat',
+		type: 'POST',
+		data: { id: id },
+		success: function (res) {
+			if (res.success == true) {
+				$('#' + id).remove();
+				// for closing the modal
+				$('#deletemessageChat-d').modal('hide');
+
+				// need to know the other user so broadcast
+				socket.emit('DchatDeleted', id);
+			}
+			else {
+				alert(res.message);
+			}
+		}
+	})
+
+});
+
+socket.on('DchatmessageDeleted', (id) => {
+	$('#' + id).remove();
+})
+
+// updating the message
+$(document).on('click', '.de', function () {
+	$('#edit-message-id-d').val($(this).attr('data-id'));
+	$('#update-message-id-d').val($(this).attr('data-msg'));
+	console.log("here in click faedit");
+})
+
+// sending the updating id to the server
+$('#edit-message-form-d').submit(function (e) {
+	e.preventDefault();
+
+	var id = $('#edit-message-id-d').val();
+	var msg = $('#update-message-id-d').val();
+
+	$.ajax({
+		url: '/update-deulex-chat',
+		type: 'POST',
+		data: { id: id, message: msg },
+		success: function (res) {
+			if (res.success == true) {
+
+				// for closing the modal
+				$('#updatemessageChat-d').modal('hide');
+				$('#' + id).find('span').text(msg);
+				$('#' + id).find('.fa-edit').attr('data-msg', msg);
+				// need to know the other user so broadcast
+				socket.emit('DchatUpdated', { id: id, message: msg });
+			}
+			else {
+				alert(res.message);
+			}
+		}
+	})
+
+});
+
+socket.on('DchatmessageUpdated', (data) => {
+	$('#' + data.id).find('span').text(data.message);
+})
+
+// ------------------------ END OF SUPREME MODEL -------------------------

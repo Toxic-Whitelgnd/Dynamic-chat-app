@@ -12089,3 +12089,14 @@ a{
 .chat-section-s{
   display: none;
 }
+
+/* for duelex model */
+#chat-container-d {
+  background-color: #f15fa2;
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+}
+.chat-section-d{
+  display: none;
+}

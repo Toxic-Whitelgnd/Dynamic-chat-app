@@ -2,14 +2,14 @@
 
 const mongoose = require('mongoose');
 
-const SChatSchema = new mongoose.Schema({
+const DChatSchema = new mongoose.Schema({
     sender_id:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
     },
     reciver_id:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'SuperSUser',
+        ref:'SuperDUser',
     },
     message:{
         type:String,
@@ -19,4 +19,4 @@ const SChatSchema = new mongoose.Schema({
 {timestamps:true}
 )
 
-module.exports = mongoose.model('SChat', SChatSchema);
+module.exports = mongoose.model('DChat', DChatSchema);

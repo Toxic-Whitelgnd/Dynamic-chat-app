@@ -10,6 +10,8 @@ const { response } = require("../routes/UserRoutes");
 require('dotenv').config();
 const SuperSUser = require('../models/SuperSupModel');
 const SChat = require('../models/SupremeChatModel');
+const SuperDUser = require('../models/DeulexModel/SuperDuModel');
+const DChat = require('../models/DeulexModel/DeulexChatModel');
 
 const registerLoad = async (req, res) => {
     try {
@@ -715,7 +717,7 @@ const updateSchat = async (req, res) => {
     }
 };
 
-// for testing purpose
+//  after making the payment to render the supreme page
 const getSupreme = async (req, res) => {
     try {
         var Susers = await SuperSUser.find({ _id: { $nin: req.session.user } })
@@ -725,6 +727,185 @@ const getSupreme = async (req, res) => {
         
     }
 };
+
+// for deulex subcription page goes here
+const superdregisterload = async (req,res) => {
+    try {
+        res.render('DeulexPack/superDeulexRegister')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const superDregister = async (req,res) => {
+    try {
+        const passwordHash = await bcrypt.hash(req.body.password, 10);
+
+        const newuser = new SuperDUser({
+            name: req.body.name,
+            password: passwordHash,
+            email: req.body.email,
+            image: 'images/' + req.file.filename,
+
+        })
+
+
+        await SuperDUser.insertMany([newuser]).then((docs) => {
+            console.log(docs);
+            res.render('SupremePack/superSupremelogin', { message: 'Regstration succesefull' })
+        })
+            .catch((err) => {
+                console.log(err);
+            });
+
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const superdloginload = async (req,res) => {
+    try {
+        res.render('DeulexPack/superDeulexlogin')
+    } catch (error) {
+        console.log(error);
+    }
+}
+// login of the supermodel
+const superDLogin = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        
+       
+        const userData = await SuperDUser.findOne({ email: email }); // Now it contains email,password,image,username
+        
+        
+        var users = await User.find({ is_deulex_user : '1'})
+
+        console.log("gotted for supreme pay user");
+        console.log(users);
+        console.log("end for supreme pay user");
+
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(password, userData.password);
+            console.log(passwordMatch);
+            if (passwordMatch) {
+                req.session.user = userData;
+                res.cookie('user', JSON.stringify(userData));
+                console.log(req.session.user);
+                // res.render('superSupremeDash',{ cuser: req.session.user , users:users});
+                res.redirect('/superDHome');
+            }
+            else {
+                res.render('login', { message: 'Wrong Password' });
+            }
+
+        }
+        else {
+            res.render('login', { message: 'Wrong credentials' });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const supreddash = async (req, res) => {
+    try {
+        var users = await User.find({ is_deulex_user : '1'})
+        res.render('DeulexPack/superDeulexDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+}
+const superDhome = async (req, res) => {
+    try {
+        var users = await User.find({ is_deulex_user : '1'})
+        console.log("from supedhome");
+        console.log(users);
+        res.render('DeulexPack/superDeulexHome',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
+// dashboard of supreme goes here
+const dashboardD = async (req, res) => {
+    try {
+        var users = await User.find({ is_deulex_user : '1'})
+        console.log("from super d dashboard");
+        console.log(users);
+        res.render('DeulexPack/superDeulexDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
+// logout of supermodel
+const superdlogout = async (req, res) => {
+    try {
+        res.clearCookie('user');
+        req.session.destroy();
+        res.redirect('/superdloginload');
+    } catch (error) {
+        console.log(error);
+    }
+}
+// this is for getting msg from frontend (to store in db) and sending response to frontend
+const saveDchat = async (req, res) => {
+    try {
+
+        var chat = new DChat(
+            {
+                sender_id: req.body.sender_id,
+                reciver_id: req.body.reciver_id,
+                message: req.body.message,
+            }
+        );
+
+        var newChat = await chat.save();
+
+        res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+}
+
+// for deleting the supermodal chat
+const deleteDchat = async (req, res) => {
+    try {
+
+        await DChat.deleteOne({ _id: req.body.id });
+
+        res.status(200).send({ success: true });
+
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+// for updating the supermodal chat
+const updateDchat = async (req, res) => {
+    try {
+
+        DChat.findByIdAndUpdate({ _id: req.body.id }, {
+            $set: {
+                message: req.body.message,
+            }
+        });
+
+        res.status(200).send({ success: true });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+
+//  after making the payment to render the supreme page
+const getDeulex = async (req, res) => {
+    try {
+        var Susers = await SuperDUser.find({ _id: { $nin: req.session.user } })
+
+        res.render('subscriptionpack/deulex',{user:req.session.user,Susers:Susers});
+    } catch (error) {
+        
+    }
+};
+
 
 // exporting the modules
 module.exports = {
@@ -766,4 +947,16 @@ module.exports = {
     deleteSchat,
     updateSchat,
     getSupreme,
+    superDregister,
+    superdregisterload,
+    superDLogin,
+    superdloginload,
+    supreddash,
+    superDhome,
+    dashboardD,
+    superdlogout,
+    saveDchat,
+    deleteDchat,
+    updateDchat,
+    getDeulex,
 }

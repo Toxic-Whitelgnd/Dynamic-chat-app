@@ -99,8 +99,22 @@ user_route.post('/save-supreme-chat',userController.saveSchat);
 user_route.post('/delete-supreme-chat',userController.deleteSchat);
 user_route.post('/update-supreme-chat',userController.updateSchat);
 
+// for deulex page get and post
+user_route.get('/superdregisterload',userController.superdregisterload);
+user_route.post('/superdregister',upload.single('image'),userController.superDregister);
+user_route.get('/superdloginload',userController.superdloginload);
+user_route.post('/superdlogin',userController.superDLogin);
+user_route.get('/superddash',userController.supreddash);
+user_route.get('/logoutd', auth.isLogin,userController.superdlogout);
+user_route.get('/dashboard-d',userController.dashboardD);
+user_route.get('/superDhome',userController.superDhome);
+user_route.post('/save-deulex-chat',userController.saveDchat);
+user_route.post('/delete-deulex-chat',userController.deleteDchat);
+user_route.post('/update-deulex-chat',userController.updateDchat);
+
 // yass working for getting the supreme page
 user_route.get('/get-supreme',userController.getSupreme);
+user_route.get('/get-deulex',userController.getDeulex);
 
 
 

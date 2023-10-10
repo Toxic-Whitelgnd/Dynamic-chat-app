@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Form</title>
+    <link rel="stylesheet" href="../../public/css/mystyle.css">
+</head>
+<body>
+    <div class="login-box">
+        <h2>Super Deulex Register Form</h2>
+        <form action="/superdregister" method="post" enctype="multipart/form-data">
+            <div class="user-box">
+                <input type="text" name="name" placeholder="PlayBoiName">
+                <label>Username</label>
+            </div>
+            <div class="user-box">
+                <input type="file" id="image" name="image" value="" required />
+                <label id="pi">Profile Image</label>
+            </div>
+            
+            <div class="user-box">
+                <input type="email" name="email" placeholder="palyboi99@gmail.com">
+                <label>Email</label>
+            </div>
+            <div class="user-box">
+                <input type="password" name="password" placeholder="***********">
+                <label>Password</label>
+            </div>
+            <a type="submit">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <input type="submit" value="R E G I S T E R" id="subbtn">
+            </a>
+            <a href="/login">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Login?
+            </a>
+        </form>
+    </div>
+    <% if(typeof message !=='undefined' ){ %> 
+        <p style="color:green;">
+            <%= message %>
+        </p>
+        <% } %>
+</body>
+</html>
+
+
+
+
