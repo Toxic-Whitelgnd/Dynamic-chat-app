@@ -49,6 +49,7 @@ user_route.get('/', auth.isLogout,userController.loginLoad);
 user_route.post('/', userController.login);
 user_route.get('/logout', auth.isLogin,userController.logout);
 
+user_route.get('/homepage',auth.isLogin,userController.homePage);
 user_route.get('/dashboard',auth.isLogin ,userController.loadDashboard);
 
 // usercontroller methods are used here

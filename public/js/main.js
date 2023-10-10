@@ -802,7 +802,7 @@ $('#chat-form-s').submit(function (e) {
 		},
 		success: function (res) {
 			if (res.success) {
-				$('#message').val('');
+				$('#message-s').val('');
 				var chat = res.data.message;
 				let html = `<div class="current-user" id='` + res.data._id + `'>
                             <h5><span>`+ chat + `</span>

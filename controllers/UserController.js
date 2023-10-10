@@ -85,6 +85,13 @@ const login = async (req, res) => {
     }
 }
 
+const homePage = async (req, res) => {
+    try {
+        res.render('homepage');
+    } catch (error) {
+        
+    }
+};
 
 const loadDashboard = async (req, res) => {
     try {
@@ -725,6 +732,7 @@ module.exports = {
     registerLoad,
     loginLoad,
     login,
+    homePage,
     loadDashboard,
     logout,
     saveChat,
