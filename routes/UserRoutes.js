@@ -112,10 +112,23 @@ user_route.post('/save-deulex-chat',userController.saveDchat);
 user_route.post('/delete-deulex-chat',userController.deleteDchat);
 user_route.post('/update-deulex-chat',userController.updateDchat);
 
+// FOR GET AND POST REQEST FOR ULTRA DEULEX PAGE
+user_route.get('/superudregisterload',userController.superudregisterload);
+user_route.post('/superudregister',upload.single('image'),userController.superUDregister);
+user_route.get('/superudloginload',userController.superudloginload);
+user_route.post('/superudlogin',userController.superUDLogin);
+user_route.get('/superuddash',userController.supreuddash);
+user_route.get('/logoutud', auth.isLogin,userController.superudlogout);
+user_route.get('/dashboard-ud',userController.dashboardUD);
+user_route.get('/superUDhome',userController.superUDhome);
+user_route.post('/save-udeulex-chat',userController.saveUDchat);
+user_route.post('/delete-udeulex-chat',userController.deleteUDchat);
+user_route.post('/update-udeulex-chat',userController.updateUDchat);
+
 // yass working for getting the supreme page
 user_route.get('/get-supreme',userController.getSupreme);
 user_route.get('/get-deulex',userController.getDeulex);
-
+user_route.get('/get-ultra-deulex',userController.getUDeulex);
 
 
 // doesnt match any route it will redirect to login page

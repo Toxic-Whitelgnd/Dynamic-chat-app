@@ -10,6 +10,10 @@ const User = require("./models/UserModel");
 const Chat = require("./models/ChatModel");
 const SChat = require("./models/SupremeChatModel");
 const DChat = require("./models/DeulexModel/DeulexChatModel");
+const SUser = require('./models/SuperSupModel')
+const DUser = require('./models/DeulexModel/SuperDuModel');
+const UDChat = require('./models/UltraDeulexModel/UDeulexChatModel');
+const UDUser = require('./models/UltraDeulexModel/SuperUDuModel');
 
 var userver = io.of('/user-server');
 
@@ -22,11 +26,16 @@ userver.on('connection',async function(socket){
     socket.broadcast.emit('getOnlineUser', {user_id: userId});
 
     await User.findByIdAndUpdate({_id: userId}, {$set:{is_online:'1'}});
+    await SUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'1'}});
+    await DUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'1'}});
+    await UDUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'1'}});
 
     socket.on('disconnect',async function(){
         console.log("User disconnected from server");
         await User.findByIdAndUpdate({_id: userId}, {$set:{is_online:'0'}});
-
+        await SUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'0'}});
+        await DUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'0'}});
+        await UDUser.findByIdAndUpdate({_id: userId}, {$set:{is_online:'0'}});
         // firing the event so that u can catch anywhere in the program
         socket.broadcast.emit('getOfflineUser',{user_id:userId});
     });
@@ -132,6 +141,37 @@ userver.on('connection',async function(socket){
     // for updating the message
     socket.on('DchatUpdated',(data)=>{
         socket.broadcast.emit('DchatmessageUpdated',data);
+    });
+
+    // ending here
+
+     // for supermodal ultra DEULEX
+    // starting here
+    socket.on('newUDChat',(data)=>{
+        socket.broadcast.emit('loadnewUDChat',data);
+    })
+
+    // loading the exist chat
+    socket.on('loadExistUDChat',async (data)=>{
+        console.log("came to s load exit chat");
+        var chats = await UDChat.find({
+            $or:[
+                {sender_id:data.sender_id,reciver_id:data.reciver_id},
+                {sender_id:data.reciver_id,reciver_id:data.sender_id},
+            ]
+        })
+      
+        // firing the exit caht after getting
+        socket.emit('GetExistUDChat',{chats:chats});
+    });
+
+    // for deleting message
+    socket.on('UDchatDeleted',(id)=>{
+        socket.broadcast.emit('UDchatmessageDeleted',id);
+    });
+    // for updating the message
+    socket.on('UDchatUpdated',(data)=>{
+        socket.broadcast.emit('UDchatmessageUpdated',data);
     });
 
     // ending here

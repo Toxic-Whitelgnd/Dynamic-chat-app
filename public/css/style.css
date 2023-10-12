@@ -12100,3 +12100,14 @@ a{
 .chat-section-d{
   display: none;
 }
+
+/* for ultra duelex model */
+#chat-container-ud {
+  background-color: #f15fa2;
+  width: 100%;
+  height: 400px;
+  overflow: scroll;
+}
+.chat-section-ud{
+  display: none;
+}

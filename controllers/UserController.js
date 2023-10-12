@@ -12,6 +12,9 @@ const SuperSUser = require('../models/SuperSupModel');
 const SChat = require('../models/SupremeChatModel');
 const SuperDUser = require('../models/DeulexModel/SuperDuModel');
 const DChat = require('../models/DeulexModel/DeulexChatModel');
+const SuperUDUser = require('../models/UltraDeulexModel/SuperUDuModel');
+const UDChat =require('../models/UltraDeulexModel/UDeulexChatModel');
+
 
 const registerLoad = async (req, res) => {
     try {
@@ -751,7 +754,7 @@ const superDregister = async (req,res) => {
 
         await SuperDUser.insertMany([newuser]).then((docs) => {
             console.log(docs);
-            res.render('SupremePack/superSupremelogin', { message: 'Regstration succesefull' })
+            res.render('DeulexPack/superDeulexlogin', { message: 'Regstration succesefull' })
         })
             .catch((err) => {
                 console.log(err);
@@ -906,6 +909,186 @@ const getDeulex = async (req, res) => {
     }
 };
 
+// FOR ULTRA DEULEX PAGE
+// for deulex subcription page goes here
+const superudregisterload = async (req,res) => {
+    try {
+        res.render('UltraDeulexPack/superultraDeulexRegister')
+    } catch (error) {
+        console.log(error);
+    }
+}
+const superUDregister = async (req,res) => {
+    try {
+        const passwordHash = await bcrypt.hash(req.body.password, 10);
+
+        const newuser = new SuperUDUser({
+            name: req.body.name,
+            password: passwordHash,
+            email: req.body.email,
+            image: 'images/' + req.file.filename,
+
+        })
+
+
+        await SuperUDUser.insertMany([newuser]).then((docs) => {
+            console.log(docs);
+            res.render('UltraDeulexPack/superultraDeulexlogin', { message: 'Regstration succesefull' })
+        })
+            .catch((err) => {
+                console.log(err);
+            });
+
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const superudloginload = async (req,res) => {
+    try {
+        res.render('UltraDeulexPack/superultraDeulexlogin')
+    } catch (error) {
+        console.log(error);
+    }
+}
+// login of the supermodel
+const superUDLogin = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+        
+       
+        const userData = await SuperUDUser.findOne({ email: email }); // Now it contains email,password,image,username
+        
+        
+        var users = await User.find({ is_deulex_user : '1'})
+
+        console.log("gotted for supreme pay user");
+        console.log(users);
+        console.log("end for supreme pay user");
+
+        if (userData) {
+            const passwordMatch = await bcrypt.compare(password, userData.password);
+            console.log(passwordMatch);
+            if (passwordMatch) {
+                req.session.user = userData;
+                res.cookie('user', JSON.stringify(userData));
+                console.log(req.session.user);
+                // res.render('superSupremeDash',{ cuser: req.session.user , users:users});
+                res.redirect('/superUDHome');
+            }
+            else {
+                res.render('login', { message: 'Wrong Password' });
+            }
+
+        }
+        else {
+            res.render('login', { message: 'Wrong credentials' });
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const supreuddash = async (req, res) => {
+    try {
+        var users = await User.find({ is_ultra_deulex_user : '1'})
+        res.render('UltraDeulexPack/superultraDeulexDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+}
+const superUDhome = async (req, res) => {
+    try {
+        var users = await User.find({ is_ultra_deulex_user : '1'})
+        console.log("from supedhome");
+        console.log(users);
+        res.render('UltraDeulexPack/superultraDeulexHome',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
+// dashboard of supreme goes here
+const dashboardUD = async (req, res) => {
+    try {
+        var users = await User.find({ is_ultra_deulex_user : '1'})
+        console.log("from super d dashboard");
+        console.log(users);
+        res.render('UltraDeulexPack/superultraDeulexDash',{cuser:req.session.user,users:users});
+    } catch (error) {
+        
+    }
+};
+// logout of supermodel
+const superudlogout = async (req, res) => {
+    try {
+        res.clearCookie('user');
+        req.session.destroy();
+        res.redirect('/superudloginload');
+    } catch (error) {
+        console.log(error);
+    }
+}
+// this is for getting msg from frontend (to store in db) and sending response to frontend
+const saveUDchat = async (req, res) => {
+    try {
+
+        var chat = new UDChat(
+            {
+                sender_id: req.body.sender_id,
+                reciver_id: req.body.reciver_id,
+                message: req.body.message,
+            }
+        );
+
+        var newChat = await chat.save();
+
+        res.status(200).send({ success: true, message: "chat inserted to db", data: newChat });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+}
+
+// for deleting the supermodal chat
+const deleteUDchat = async (req, res) => {
+    try {
+
+        await UDChat.deleteOne({ _id: req.body.id });
+
+        res.status(200).send({ success: true });
+
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+// for updating the supermodal chat
+const updateUDchat = async (req, res) => {
+    try {
+
+        console.log("came here in UD chat update");
+
+        UDChat.findByIdAndUpdate({ _id: req.body.id }, {
+            $set: {
+                message: req.body.message,
+            }
+        });
+
+        console.log("came here in UD chat updatedd");
+
+        res.status(200).send({ success: true });
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+const getUDeulex = async (req, res) => {
+    try {
+        var Susers = await SuperUDUser.find({ _id: { $nin: req.session.user } })
+
+        res.render('subscriptionpack/ultradeulex',{user:req.session.user,Susers:Susers});
+    } catch (error) {
+        
+    }
+};
 
 // exporting the modules
 module.exports = {
@@ -959,4 +1142,16 @@ module.exports = {
     deleteDchat,
     updateDchat,
     getDeulex,
+    superUDregister,
+    superudregisterload,
+    superUDLogin,
+    superudloginload,
+    supreuddash,
+    superUDhome,
+    dashboardUD,
+    superudlogout,
+    saveUDchat,
+    deleteUDchat,
+    updateUDchat,
+    getUDeulex,
 }
