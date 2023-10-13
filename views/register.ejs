@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register Form</title>
     <link rel="stylesheet" href="../public/css/mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
+
 <body>
     <div class="login-box">
         <h2>Register Form</h2>
@@ -18,21 +21,35 @@
                 <input type="file" id="image" name="image" value="" required />
                 <label id="pi">Profile Image</label>
             </div>
-            
+
             <div class="user-box">
                 <input type="email" name="email" placeholder="palyboi99@gmail.com">
-                <label>Email</label>
+                <label id="em">Email</label>
             </div>
             <div class="user-box">
                 <input type="password" name="password" placeholder="***********">
                 <label>Password</label>
+            </div>
+            <div class="user-box">
+                <label id="cs">Select Country</label>
+                <input type="hidden" name="country" id="country" placeholder="PlayBoiName">
+                <div id="select-container">
+
+                </div>
+            </div>
+            <div class="user-box">
+                <label id="cdir">Select Dir Region</label>
+                <input type="hidden" name="countrydir" id="countrydir" placeholder="PlayBoiName">
+                <div id="select-container-dir">
+
+                </div>
             </div>
             <a type="submit">
                 <span></span>
                 <span></span>
                 <span></span>
                 <span></span>
-                <input type="submit" value="R E G I S T E R" id="subbtn">
+                <input type="submit" disabled value="R E G I S T E R" id="subbtn">
             </a>
             <a href="/login">
                 <span></span>
@@ -43,14 +60,150 @@
             </a>
         </form>
     </div>
-    <% if(typeof message !=='undefined' ){ %> 
+    <% if(typeof message !=='undefined' ){ %>
         <p style="color:green;">
             <%= message %>
         </p>
         <% } %>
+
+            <script>
+                var countryselection;
+                var countrydirselection;
+                var countryC = ['none', 'US', 'IND', 'AUS', 'JP'];
+                var countryN = ['none', 'USA', 'India', 'Australia', 'Japan'];
+
+                var Usadir = ['none', 'los', 'tex', 'ny', 'ws'];
+                var UsadirN = ['none', 'LosAngles', 'Texas', 'New York', 'Washington'];
+
+                var Inddir = ['none', 'mum', 'dl', 'blr', 'ch'];
+                var InddirN = ['none', 'Mumbai', 'Delhi', 'Bangalore', 'Chennai'];
+
+                var Ausdir = ['none', 'syd', 'mel', 'per', 'bri'];
+                var AusdirN = ['none', 'Sydney', 'Melbourne', 'Perth', 'Brisbane'];
+
+                var JPdir = ['none', 'os', 'kyo', 'tk', 'hr'];
+                var JPdirN = ['none', 'Osaka', 'Kyoto', 'Tokyo', 'Hiroshima'];
+
+                var selectC = document.createElement('select');
+                selectC.id = "mycountry";
+                for (let i = 0; i <= 4; i++) {
+                    var options = document.createElement('option');
+                    options.value = countryC[i];
+                    options.text = countryN[i];
+
+                    selectC.appendChild(options);
+                }
+
+                var selectcont = document.getElementById('select-container');
+                selectcont.appendChild(selectC);
+
+                var ans = document.getElementById("mycountry");
+                countryselection = ans.value;
+
+
+                ans.addEventListener('change', function (e) {
+                    var ansval = e.target.value;
+                    console.log(ansval);
+                    countryselection = ansval;
+                    setval(ansval);
+                    adddir(countryselection);
+                });
+
+                function adddir(c) {
+                    var selectcontdir = document.getElementById('select-container-dir');
+                    var selectC1 = document.createElement('select');
+                    selectC1.id = "mycountrydir";
+                    if (c == 'US') {
+
+                        for (let i = 0; i <= 4; i++) {
+                            var options = document.createElement('option');
+                            options.value = Usadir[i];
+                            options.text = UsadirN[i];
+
+                            selectC1.appendChild(options);
+                        }
+
+
+
+                    }
+                    else if (c == 'IND') {
+
+                        for (let i = 0; i <= 4; i++) {
+                            var options = document.createElement('option');
+                            options.value = Inddir[i];
+                            options.text = InddirN[i];
+
+                            selectC1.appendChild(options);
+                        }
+
+                    }
+                    else if (c == 'AUS') {
+                        for (let i = 0; i <= 4; i++) {
+                            var options = document.createElement('option');
+                            options.value = Ausdir[i];
+                            options.text = AusdirN[i];
+
+                            selectC1.appendChild(options);
+                        }
+                    }
+                    else {
+                        for (let i = 0; i <= 4; i++) {
+                            var options = document.createElement('option');
+                            options.value = JPdir[i];
+                            options.text = JPdirN[i];
+
+                            selectC1.appendChild(options);
+                        }
+                    }
+                    selectcontdir.appendChild(selectC1);
+                    var prevchild = selectcontdir.firstElementChild;
+                    if (prevchild) {
+                        selectcontdir.removeChild(prevchild);
+                    }
+                    selectcontdir.appendChild(selectC1);
+                    var ansdir = document.getElementById('mycountrydir');
+                    dircahnge(ansdir);
+
+
+
+
+                }
+
+                function dircahnge(e1) {
+                    e1.addEventListener('change', function (e) {
+                        countrydirselection = e.target.value;
+                        setvaldir(countrydirselection);
+                        console.log(countrydirselection);
+                    });
+
+                }
+
+                function setval(cs) {
+                    var inp1 = document.getElementById('country');
+                    inp1.value = cs;
+                    console.log(inp1.value);
+
+                }
+                function setvaldir(csdir) {
+                    var inp2 = document.getElementById('countrydir');
+                    inp2.value = csdir;
+                    console.log(inp2.value);
+
+                    verifyserver()
+                }
+
+                function verifyserver() {
+                    var sumbitbtn = document.getElementById('subbtn');
+                    console.log(countrydirselection, countryselection);
+                    if (countryselection !== 'none' && countrydirselection !== 'none') {
+                        console.log("fk here");
+                        sumbitbtn.removeAttribute('disabled');
+                    }
+                }
+
+
+
+            </script>
 </body>
+
 </html>
-
-
-
-

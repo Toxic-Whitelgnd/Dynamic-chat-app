@@ -46,6 +46,14 @@ const UserSchema = new mongoose.Schema({
     payment_signature:{
         type:String,
         default:'',
+    },
+    country_server:{
+        type:String,
+        required:true,
+    },
+    country_dir_server:{
+        type:String,
+        required:true,
     }
 },
 {timestamps:true}

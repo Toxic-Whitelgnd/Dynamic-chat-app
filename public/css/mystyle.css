@@ -55,6 +55,13 @@
     color: #f15fd2;
     font-size: 12px;
   }
+
+  #em{
+    top: -20px;
+    left: 0;
+    color: #f15fd2;
+    font-size: 12px;
+  }
   
   .login-box form a {
     position: relative;
@@ -66,7 +73,7 @@
     text-transform: uppercase;
     overflow: hidden;
     transition: .5s;
-    margin-top: 40px;
+    margin-top: 45px;
     letter-spacing: 4px
   }
   
@@ -192,6 +199,25 @@
     left: 0;
     color: #f15fd2;
     font-size: 12px;
+  }
+
+  /* for server selection */
+  #cs{
+    margin-left: 120px;
+    top: -10px;
+    color: #f15fd2;
+    font-size: 13px;
+  }
+  #cdir{
+    margin-left: 120px;
+    top: 10px;
+    margin-bottom: 4px;
+    color: #f15fd2;
+    font-size: 13px;
+  }
+
+  #mycountrydir{
+    margin-top: 20px;
   }
 
   /* for subscription card page */

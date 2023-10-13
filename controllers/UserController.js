@@ -73,7 +73,7 @@ const login = async (req, res) => {
                 req.session.user = userData;
                 res.cookie('user', JSON.stringify(userData));
                 console.log(req.session.user);
-                res.redirect('/dashboard')
+                res.redirect('/homepage')
 
             }
             else {
