@@ -85,6 +85,7 @@ user_route.post('/update-group-chat',userController.updateGroupChat);
 user_route.get('/subscription',userController.subscription);
 user_route.post('/payment-page',auth.isLogin,userController.paymentPage);
 user_route.post('/update-premium-user',auth.isLogin,userController.updatePremiumUser);
+user_route.post('/cancel-subscription',userController.cancelSub);
 
 // for supermodel supreme get and post request
 user_route.get('/supersregisterload',userController.supersregisterload);

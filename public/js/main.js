@@ -28,9 +28,10 @@ function getCookie(name) {
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+var sender_id;
 var userData = JSON.parse(getCookie('user'));
 
-var sender_id = userData._id;
+	sender_id = userData._id;
 var reciver_id;
 var global_group_id;
 var socket = io('/user-server', {
@@ -1319,3 +1320,23 @@ socket.on('UDchatmessageUpdated', (data) => {
 
 
 // ------------------------- END OF ULTRA DEULEX MODEL --------------------------
+
+// for cancel subscription page
+
+$('#cancel-form').submit(function (e) {
+	e.preventDefault();
+	var can = "cancel";
+	$.ajax({
+		type:'POST',
+		url:'/cancel-subscription',
+		data:can,
+		success:function(res){
+			if(res.success){
+				console.log("change the page");
+				$('#cancelsub').modal('hide');
+				window.location.replace('/logout')
+			}
+		}
+	})
+
+});

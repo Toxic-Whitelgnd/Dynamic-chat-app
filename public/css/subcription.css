@@ -3,6 +3,8 @@
 }
 .supb{
     margin-top: 50px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .supb p{

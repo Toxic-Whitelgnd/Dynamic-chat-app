@@ -4,17 +4,59 @@
 
     <div class="row sup">
         <h4>Things that you will get</h4>
-        <div class="col-5 supb">
+        <div class="supb colss">
 
-            <p>Chat with popular Indian girls</p>
-            <p>Chat with popular Instagram girls</p>
-            <p>Chat with popular Youtuber girls</p>
-            <p>Change of increase your Love</p>
-        </div>
-        <div class="col-md-4">
-
-            <img src="https://images.unsplash.com/photo-1429277005502-eed8e872fe52?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                alt="hornygirl" style="height: 200px;width: 400px;" />
+            <div class="col" ontouchstart="this.classList.toggle('hover');">
+                <div class="container1">
+                    <div class="front"
+                        style="background-image: url(https://images.unsplash.com/photo-1618560550792-7f042c3f5611?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                        <div class="inner">
+                            <p>Indian</p>
+                            <span>North Girl</span>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <div class="inner">
+                            <p>Can chat with the popular girls all over the India.</p>
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col" ontouchstart="this.classList.toggle('hover');">
+                <div class="container1">
+                    <div class="front"
+                        style="background-image: url(https://images.unsplash.com/photo-1617253123627-f7e8ddf6a831?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80)">
+                        <div class="inner">
+                            <p>Indian</p>
+                            <span>All over India</span>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <div class="inner">
+                            <p>Can chat with the popular fans girls all over the India.</p>
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col" ontouchstart="this.classList.toggle('hover');">
+                <div class="container1">
+                    <div class="front"
+                        style="background-image: url(https://images.unsplash.com/photo-1512310604669-443f26c35f52?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1934&q=80)">
+                        <div class="inner">
+                            <p>Indian</p>
+                            <span>South Girls</span>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <div class="inner">
+                            <p>Can chat with the popular Instagram girls all over the India.</p>
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div>
             <h1>Start Chatiing now!!</h1>
@@ -54,6 +96,37 @@
                         </form>
                     </div>
                 </div>
+            </div>
+
+            <div class="cancelsubb">
+                <h2>Cancel the Subscription</h2>
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+                    <defs>
+                        <filter id="gooey">
+                            <!-- in="sourceGraphic" -->
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+                            <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9"
+                                result="highContrastGraphic" />
+                            <feComposite in="SourceGraphic" in2="highContrastGraphic" operator="atop" />
+                        </filter>
+                    </defs>
+                </svg>
+
+                <button id="gooey-button"  data-bs-toggle="modal"  data-bs-target="#cancelsub1">
+                    Cancel
+                    <span class="bubbles">
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                        <span class="bubble"></span>
+                    </span>
+                </button>
             </div>
 
             <div class="modal fade" id="deletemessageChat-s" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -97,6 +170,29 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="cancelsub1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Delete message</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="" id="cancel-form">
+                            <div class="modal-body">
+                                <input type="hidden" name="uid" id="cancel-id-s">
+                                <p>Are you sure you want to cancel the subscription?</p>
+                                <p id="delete-message-ud"> <b></b></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+                                <button type="submit" class="btn btn-danger">Yes</button>
                             </div>
                         </form>
                     </div>

@@ -163,7 +163,7 @@ const updateChat = async (req, res) => {
     try {
         console.log(req.body.id + req.body.message);
         try {
-            Chat.findByIdAndUpdate({ _id: req.body.id }, {
+            await Chat.findByIdAndUpdate({ _id: req.body.id }, {
                 $set: {
                     message: req.body.message,
                 }
@@ -568,6 +568,34 @@ const updatePremiumUser = async function(req,res){
     }
 }
 
+// for cancelling subscription
+const cancelSub = async (req, res) => {
+    var user = req.session.user
+    var mem = '1';
+    if(user.is_supreme_user === '1'){
+        mem = '0';
+    }
+    else if(user.is_deulex_user =='1'){
+        mem = '0';
+    }
+    else{
+        mem = '0';
+    }
+
+    await User.findByIdAndUpdate({
+        _id: req.session.user._id,
+    },{
+        $set:{
+            is_supreme_user:mem,
+            is_deulex_user:mem,
+            is_ultra_deulex_user:mem
+        }
+    });
+
+    res.status(200).send({ message: 'ya baby updated' ,success:true });
+
+};
+
 // supermodel creation goes here
 const supersregisterload = async (req,res) => {
     try {
@@ -719,7 +747,7 @@ const deleteSchat = async (req, res) => {
 const updateSchat = async (req, res) => {
     try {
 
-        SChat.findByIdAndUpdate({ _id: req.body.id }, {
+        await SChat.findByIdAndUpdate({ _id: req.body.id }, {
             $set: {
                 message: req.body.message,
             }
@@ -897,7 +925,7 @@ const deleteDchat = async (req, res) => {
 const updateDchat = async (req, res) => {
     try {
 
-        DChat.findByIdAndUpdate({ _id: req.body.id }, {
+        await DChat.findByIdAndUpdate({ _id: req.body.id }, {
             $set: {
                 message: req.body.message,
             }
@@ -1078,7 +1106,7 @@ const updateUDchat = async (req, res) => {
 
         console.log("came here in UD chat update");
 
-        UDChat.findByIdAndUpdate({ _id: req.body.id }, {
+        await UDChat.findByIdAndUpdate({ _id: req.body.id }, {
             $set: {
                 message: req.body.message,
             }
@@ -1165,4 +1193,5 @@ module.exports = {
     deleteUDchat,
     updateUDchat,
     getUDeulex,
+    cancelSub,
 }
