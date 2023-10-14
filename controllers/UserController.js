@@ -33,6 +33,8 @@ const register = async (req, res) => {
             password: passwordHash,
             email: req.body.email,
             image: 'images/' + req.file.filename,
+            country_server: req.body.country,
+            country_dir_server:req.body.countrydir,
 
         })
 
@@ -66,6 +68,8 @@ const login = async (req, res) => {
        
         const userData = await User.findOne({ email: email }); // Now it contains email,password,image,username
         
+        const cserverdir = userData.country_dir_server;
+
         if (userData) {
             const passwordMatch = await bcrypt.compare(password, userData.password);
             console.log(passwordMatch);
@@ -100,7 +104,9 @@ const homePage = async (req, res) => {
 
 const loadDashboard = async (req, res) => {
     try {
-        var users = await User.find({ _id: { $nin: req.session.user } })
+        var users = await User.find({ _id: { $nin: req.session.user },
+            country_dir_server: req.session.user.country_dir_server}
+        )
         res.render('dashboard', { user: req.session.user, users: users });
 
 
@@ -155,12 +161,17 @@ const deleteChat = async (req, res) => {
 // for updating chat
 const updateChat = async (req, res) => {
     try {
-
-        Chat.findByIdAndUpdate({ _id: req.body.id }, {
-            $set: {
-                message: req.body.message,
-            }
-        });
+        console.log(req.body.id + req.body.message);
+        try {
+            Chat.findByIdAndUpdate({ _id: req.body.id }, {
+                $set: {
+                    message: req.body.message,
+                }
+            },{ new: true });
+        } catch (error) {
+            console.log(error);
+        }
+        
 
         res.status(200).send({ success: true });
     } catch (error) {

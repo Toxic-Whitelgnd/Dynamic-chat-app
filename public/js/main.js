@@ -212,6 +212,8 @@ $('#edit-message-form').submit(function (e) {
 	var id = $('#edit-message-id').val();
 	var msg = $('#update-message-id').val();
 
+	console.log(id , msg);
+
 	$.ajax({
 		url: '/update-chat',
 		type: 'POST',
