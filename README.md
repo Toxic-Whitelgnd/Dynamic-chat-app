@@ -42,6 +42,4 @@
 ## need to style the web app
 
 # Things to do
-> Create a Super Chat Model
-> Change the name in the subscription.ejs file
-> Make save update and delete and socket function to it
+> setuping verify email one last thing to do
